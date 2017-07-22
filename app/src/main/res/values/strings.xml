@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Cardio</string>
+
+    <string name="library_opencv_name">opencv_java</string>
+
+    <string name="menu_item_config_title">Settings</string>
+    <string name="menu_item_toggle_title">Toggle</string>
+
+    <string name="dialog_camera_message">Cardio has staved from using the Camera and would now die a horrible death...</string>w
+    <string name="dialog_camera_button_title">Commit Murder</string>
 </resources>
