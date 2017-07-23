@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ap="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/view_graph"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        ap:backgroundColor="@color/view_graph_color_background"
+        ap:lineLabels="left|bottom"
+        ap:rangeTitle="@string/fragment_graph_range"
+        ap:domainTitle="@string/fragment_graph_domain"
+        ap:renderMode="use_background_thread"
+        />
+</LinearLayout>
