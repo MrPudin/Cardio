@@ -7,11 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceView;
+import android.view.WindowManager;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.Mat;
@@ -24,10 +25,9 @@ public class MainActivity
     private static String STATE_LAYOUT = "main_activity_main_state";
     private static int LAYOUT_DISPLAY = 0;
     private static int LAYOUT_CONFIG = 0;
-
     private static int PERMISSION_CAMERA_REQUEST_CODE = 1;
-
     private static String LOG_TAG = "Cardio.MainActivity";
+
 
     private int layout; //Current Layout
 
@@ -55,6 +55,7 @@ public class MainActivity
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if(requestCode == MainActivity.PERMISSION_CAMERA_REQUEST_CODE) {
+            //Camera Permission Rejected
             if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 //Terminate due to Lack of Camera Permissions
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -71,7 +72,6 @@ public class MainActivity
                 dialogBuilder.create().show();
             }
         }
-
     }
 
 
@@ -119,9 +119,32 @@ public class MainActivity
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
 
+        return inputFrame.rgba();
     }
 
     @Override
     public void onCameraViewStopped() {
+    }
+
+    private void setupCamera()
+    {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        CameraBridgeViewBase cameraView = (CameraBridgeViewBase) findViewById(R.id.view_cv_camera);
+        cameraView.setCvCameraViewListener(this);
+        cameraView.enableView();
+        cameraView.setVisibility(SurfaceView.VISIBLE);
+    }
+
+    //UI Methods
+    private void setupLayout(int layout)
+    {
+        if(layout == MainActivity.LAYOUT_CONFIG)
+        {
+
+        }
+        else //Display Layout
+        {
+            this.setContentView(R.layout.activity_main_display);
+        }
     }
 }
