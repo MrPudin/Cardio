@@ -64,25 +64,7 @@ public class BlobLocator {
         }
     }
 
-    //Utility Methods
-    //TODO: Change to Private
-    protected Mat process(Mat mat)
-    {
-        //Convert to Grayscale
-        Mat processMat = new Mat(mat.rows(), mat.cols(), mat.type());
-        Imgproc.cvtColor(mat, processMat, Imgproc.COLOR_RGBA2GRAY, processMat.channels());
-
-        //Noise Reduction
-        Imgproc.dilate(processMat, processMat, null, null, 2);
-        Imgproc.erode(processMat, processMat, null, null, 2);
-        Imgproc.erode(processMat, processMat, null, null, 2);
-        Imgproc.dilate(processMat, processMat, null, null, 2);
-
-        return processMat;
-    }
-
-
-    private void loadConfig()
+    public void loadConfig()
     {
         File input =
                 new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/bd.xml");
@@ -120,30 +102,45 @@ public class BlobLocator {
         this.detector.read(input.getPath());
     }
 
+    //Utility Methods
+    //TODO: Change to Private
+    protected Mat process(Mat mat)
+    {
+        //Convert to Grayscale
+        Mat processMat = new Mat(mat.rows(), mat.cols(), mat.type());
+        Imgproc.cvtColor(mat, processMat, Imgproc.COLOR_RGBA2GRAY, processMat.channels());
+
+        //Noise Reduction
+        Imgproc.dilate(processMat, processMat, null, null, 2);
+        Imgproc.erode(processMat, processMat, null, null, 2);
+        Imgproc.erode(processMat, processMat, null, null, 2);
+        Imgproc.dilate(processMat, processMat, null, null, 2);
+
+        return processMat;
+    }
+
+
+
+
     //Setters - Filter Parameters
     public void setBlobColor(double blobColor) {
         this.blobColor = blobColor;
-        this.loadConfig();
     }
 
     public void setBlobMinArea(double blobMinArea) {
         this.blobMinArea = blobMinArea;
-        this.loadConfig();
     }
 
     public void setBlobMinCircularity(double blobMinCircularity) {
         this.blobMinCircularity = blobMinCircularity;
-        this.loadConfig();
     }
 
     public void setBlobMinConvexity(double blobMinConvexity) {
         this.blobMinConvexity = blobMinConvexity;
-        this.loadConfig();
     }
 
     public void setBlobMinInertia(double blobMinInertia) {
         this.blobMinInertia = blobMinInertia;
-        this.loadConfig();
     }
 
     //Getter - Blob Location

@@ -174,5 +174,6 @@ public class MainActivity
         this.locator.setBlobMinInertia(
                 Float.parseFloat(
                         preferences.getString("blob_min_inertia", "0.7")));
+        this.locator.loadConfig();
     }
 }
