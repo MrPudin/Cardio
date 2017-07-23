@@ -27,7 +27,7 @@ public class MainActivity
 
     private static String STATE_LAYOUT = "main_activity_main_state";
     private static int LAYOUT_DISPLAY = 0;
-    private static int LAYOUT_CONFIG = 0;
+    private static int LAYOUT_CONFIG = 1;
     private static int PERMISSION_CAMERA_REQUEST_CODE = 1;
     private static String LOG_TAG = "Cardio.MainActivity";
 
@@ -78,6 +78,10 @@ public class MainActivity
                 dialogBuilder.create().show();
             }
         }
+
+        //Camera Permission Accepted
+        this.setupLayout(this.layout);
+        this.setupCamera();
     }
 
 
@@ -124,8 +128,11 @@ public class MainActivity
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        //Locate LED
+        Mat frame = inputFrame.gray();
 
-        return inputFrame.rgba();
+
+        return frame;
     }
 
     @Override
@@ -139,6 +146,8 @@ public class MainActivity
         cameraView.setCvCameraViewListener(this);
         cameraView.enableView();
         cameraView.setVisibility(SurfaceView.VISIBLE);
+        //TODO: REMOVE BELOW
+        cameraView.bringToFront();
     }
 
     //UI Methods

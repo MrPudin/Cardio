@@ -1,18 +1,19 @@
 package pudding.com.cardio;
 
 
-import android.os.Environment;
 import android.util.Log;
 
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 
 public class BlobLocator {
     private static String LOG_TAG = "Cardio.BlobLocator";
@@ -20,6 +21,7 @@ public class BlobLocator {
     //Detector
     FeatureDetector detector;
     Point blobLocation;
+    double blobSize;
 
     //Detector Parameters
     private double blobColor;
@@ -32,7 +34,7 @@ public class BlobLocator {
     {
         //Detector Default Parameters
         this.blobColor = 255.0;
-        this.blobMinArea = 100.0;
+        this.blobMinArea = 10.0;
         this.blobMinCircularity = 0.8;
         this.blobMinConvexity = 0.7;
         this.blobMinInertia = 0.7;
@@ -52,8 +54,9 @@ public class BlobLocator {
         {
             KeyPoint point = detectPoints.toList().get(0);
             this.blobLocation = new Point(point.pt.x, point.pt.y);
+            this.blobSize = point.size;
 
-            Log.d(LOG_TAG, "Detection Succeeded: Found blob");
+            Log.d(LOG_TAG, "Detection Succeeded: Found blob of size" + this.blobSize);
             return true;
         }
         else
@@ -64,10 +67,21 @@ public class BlobLocator {
         }
     }
 
+
     public void loadConfig()
     {
-        File input =
-                new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/bd.xml");
+        File input;
+        try
+        {
+            input = File.createTempFile("blob_config", "xml");
+        }catch (IOException exception)
+        {
+            Log.e(BlobLocator.LOG_TAG, "Could not load configuration," +
+                    "which means BlobLocator would not function correctly");
+            Log.e(BlobLocator.LOG_TAG, exception.getLocalizedMessage());
+            return;
+        }
+
         String detectorConfig = "<?xml version=\"1.0\"?>\n" +
                 "<opencv_storage>\n" +
                 "<thresholdStep>20.</thresholdStep>\n" +
@@ -78,7 +92,7 @@ public class BlobLocator {
                 "<blobColor>"+this.blobColor +"</blobColor>\n" +
                 "<filterByArea>1</filterByArea>\n" +
                 "<minArea>"+this.blobMinArea +"</minArea>\n" +
-                "<maxArea>1000000000.0</maxArea>\n" +
+                "<maxArea>2000000.0</maxArea>\n" +
                 "<filterByCircularity>1</filterByCircularity>\n" +
                 "<minCircularity>"+this.blobMinCircularity +"</minCircularity>\n" +
                 "<maxCircularity>1.0</maxCircularity>\n" +
@@ -104,23 +118,28 @@ public class BlobLocator {
 
     //Utility Methods
     //TODO: Change to Private
-    protected Mat process(Mat mat)
+    private Mat process(Mat mat)
     {
-        //Convert to Grayscale
-        Mat processMat = new Mat(mat.rows(), mat.cols(), mat.type());
-        Imgproc.cvtColor(mat, processMat, Imgproc.COLOR_RGBA2GRAY, processMat.channels());
+        Mat processMat = new Mat(mat.rows() / 4, mat.cols() / 4, mat.type());
+        Mat tmpMat = new Mat(mat.rows() / 2, mat.cols() / 2, mat.type());
 
-        //Noise Reduction
-        Imgproc.dilate(processMat, processMat, null, null, 2);
-        Imgproc.erode(processMat, processMat, null, null, 2);
-        Imgproc.erode(processMat, processMat, null, null, 2);
-        Imgproc.dilate(processMat, processMat, null, null, 2);
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_RECT, new Size(3,3));
+
+        //Noise Reduction && Optimisation
+        Imgproc.pyrDown(mat, tmpMat, tmpMat.size());
+        Imgproc.pyrDown(tmpMat, processMat, processMat.size());
+
+        //Morphological Opening
+        Imgproc.erode(processMat, processMat, kernel);
+        Imgproc.dilate(processMat, processMat, kernel);
+
+        //Morphological Closing
+        Imgproc.dilate(processMat, processMat, kernel);
+        Imgproc.erode(processMat, processMat, kernel);
+
 
         return processMat;
     }
-
-
-
 
     //Setters - Filter Parameters
     public void setBlobColor(double blobColor) {
@@ -143,8 +162,12 @@ public class BlobLocator {
         this.blobMinInertia = blobMinInertia;
     }
 
-    //Getter - Blob Location
+    //Getter - Blob Information
     public Point getBlobLocation() {
         return blobLocation;
+    }
+
+    public double getBlobSize() {
+        return blobSize;
     }
 }

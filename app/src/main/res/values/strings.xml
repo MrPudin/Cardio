@@ -50,7 +50,7 @@
     <string name="fragment_config_blob_min_area_title">Minimum Area</string>
     <string name="fragment_config_blob_min_area_summary">A number that determines the minimum area requirement.
     Area is defines as the amount of pixels that object occupies.</string>
-    <string name="fragment_config_blob_min_area_default">100.0 </string>
+    <string name="fragment_config_blob_min_area_default">10.0 </string>
     <string name="fragment_config_blob_min_circularity_title">Minimum circularity</string>
     <string name="fragment_config_blob_min_circularity_summary">A number that determines the minimum circularity requirement.
     Circularity measures how close to a circle an object is.</string>
