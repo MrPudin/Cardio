@@ -2,6 +2,7 @@ package pudding.com.cardio;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,20 +23,21 @@ public class MainActivity
         extends AppCompatActivity
         implements CameraBridgeViewBase.CvCameraViewListener2
 {
+    public static String SHARED_PREFERENCE_FILE_NAME = "pudding.com.cardio.config";
+
     private static String STATE_LAYOUT = "main_activity_main_state";
     private static int LAYOUT_DISPLAY = 0;
     private static int LAYOUT_CONFIG = 0;
     private static int PERMISSION_CAMERA_REQUEST_CODE = 1;
     private static String LOG_TAG = "Cardio.MainActivity";
 
-
     private int layout; //Current Layout
 
+    private BlobLocator locator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //Load OpenCV
         System.loadLibrary(getString(R.string.library_opencv_name));
 
@@ -48,6 +50,10 @@ public class MainActivity
         this.layout = MainActivity.LAYOUT_DISPLAY;
         if(savedInstanceState != null)
             this.layout = savedInstanceState.getInt(MainActivity.STATE_LAYOUT);
+
+        //Setup Utility Objects
+        this.locator = new BlobLocator();
+        this.loadConfig();
     }
 
     @Override
@@ -82,7 +88,7 @@ public class MainActivity
         outState.putInt(MainActivity.STATE_LAYOUT, this.layout);
     }
 
-    //Menu
+    //Menu Methods
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -146,5 +152,27 @@ public class MainActivity
         {
             this.setContentView(R.layout.activity_main_display);
         }
+    }
+
+    //Utility Methods
+    private void loadConfig() {
+        SharedPreferences preferences =
+                getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE_NAME, 0);
+
+        this.locator.setBlobColor(
+                Float.parseFloat(
+                        preferences.getString("blob_color", "255.0")));
+        this.locator.setBlobMinArea(
+                Float.parseFloat(
+                        preferences.getString("blob_min_area", "100.0")));
+        this.locator.setBlobMinCircularity(
+                Float.parseFloat(
+                        preferences.getString("blob_min_circularity", "0.8")));
+        this.locator.setBlobMinConvexity(
+                Float.parseFloat(
+                        preferences.getString("blob_min_convexity", "0.7")));
+        this.locator.setBlobMinInertia(
+                Float.parseFloat(
+                        preferences.getString("blob_min_inertia", "0.7")));
     }
 }

@@ -1,11 +1,66 @@
 <resources>
     <string name="app_name">Cardio</string>
 
+    <!-- Libraries -->
     <string name="library_opencv_name">opencv_java3</string>
 
+    <!-- Menus -->
     <string name="menu_item_config_title">Settings</string>
     <string name="menu_item_toggle_title">Toggle</string>
 
+    <!-- Dialog -->
     <string name="dialog_camera_message">You have staved Cardio from using the Camera and it would now die a horrible death...</string>w
     <string name="dialog_camera_button_title">Commit Murder</string>
+
+    <!-- Preferences -->
+    <string name="fragment_config_general_category_title">General</string>
+    <string name="fragment_config_general_frequency_title">Frequency</string>
+    <string name="fragment_config_general_frequency_summary">Set the frequency data is sampled from the circuit.</string>
+    <string name="fragment_config_general_frequency_default">0.1</string>
+
+    <string name="fragment_config_detect_category_title">Detection</string>
+    <string name="fragment_config_detect_threshold_title">Threshold</string>
+    <string name="fragment_config_detect_threshold_summary">Set the detection threshold, which is a value between 1.0 and 0.0 that determines if a detection operation is successful.
+    If the decimal ratio of successful attempts at detecting the circuit and total attempts at detecting the circuit is greater or equal to the threshold,
+    the detection operation would be considered as successful</string>
+    <string name="fragment_config_detect_threshold_default">0.01</string>
+    <string name="fragment_config_detect_count_title">Repetitions</string>
+    <string name="fragment_config_detect_count_summary">Set the number of repetitions of attempting to detect the circuit to run in a single detection operation.
+    A higher repetition count would result in better detection, but takes more time.</string>
+    <string name="fragment_config_detect_count_default">100</string>
+    <string name="fragment_config_detect_delay_title">Delay</string>
+    <string name="fragment_config_detect_delay_summary">Set the delay between repetitions of attempting to detect the circuit in nanoseconds</string>
+    <string name="fragment_config_detect_delay_default">100</string>
+
+    <string name="fragment_config_filter_category_title">Filter</string>
+    <string name="fragment_config_filter_threshold_title">Threshold</string>
+    <string name="fragment_config_filter_threshold_summary">Set the filter threshold, which is the defined as the minimum number of standard deviations the signal is away from the mean.
+    Signals deviation from the mean that are at or above the threshold are registered as a beat.</string>
+    <string name="fragment_config_filter_threshold_default">1.0</string>
+    <string name="fragment_config_filter_log_title">Log Size</string>
+    <string name="fragment_config_filter_log_summary">Sets the size of the filter log, which helps the filter function more reliably.
+    A higher value helps the filter more reliably, causes the filter to take a longer time to process signals.</string>
+    <string name="fragment_config_filter_log_default">3</string>
+
+    <string name="fragment_config_blob_category_title">Computer Vision</string>
+    <string name="fragment_config_blob_color_title">Color</string>
+    <string name="fragment_config_blob_color_summary">A number between 0 at 255 that determines the specific color requirement.
+    0 searches for very dark colors, 255 searches for very bright colors</string>
+    <string name="fragment_config_blob_color_default">255</string>
+    <string name="fragment_config_blob_min_area_title">Minimum Area</string>
+    <string name="fragment_config_blob_min_area_summary">A number that determines the minimum area requirement.
+    Area is defines as the amount of pixels that object occupies.</string>
+    <string name="fragment_config_blob_min_area_default">100.0 </string>
+    <string name="fragment_config_blob_min_circularity_title">Minimum circularity</string>
+    <string name="fragment_config_blob_min_circularity_summary">A number that determines the minimum circularity requirement.
+    Circularity measures how close to a circle an object is.</string>
+    <string name="fragment_config_blob_min_circularity_default">0.8</string>
+    <string name="fragment_config_blob_min_convexity_title">Minimum Convexity</string>
+    <string name="fragment_config_blob_min_convexity_summary">A number that determines the minimum convexity requirement.
+    Convexity is defined as the (Area of the Blob / Area of its convex hull).</string>
+    <string name="fragment_config_blob_min_convexity_default">0.7</string>
+    <string name="fragment_config_blob_min_inertia_title">Minimum Inertia</string>
+    <string name="fragment_config_blob_min_inertia_summary">A number that determines the minimum inertia requirement.
+    The inertia measures how elongated an object is.</string>
+    <string name="fragment_config_blob_min_inertia_default">0.7</string>
 </resources>

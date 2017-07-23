@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <PreferenceCategory
+        android:title="@string/fragment_config_general_category_title">
+
+        <EditTextPreference
+            android:key="data_frequency"
+            android:title="@string/fragment_config_general_frequency_title"
+            android:summary="@string/fragment_config_general_frequency_summary"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/fragment_config_general_frequency_default"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/fragment_config_detect_category_title">
+
+        <EditTextPreference
+            android:key="detect_threshold"
+            android:summary="@string/fragment_config_detect_threshold_summary"
+            android:title="@string/fragment_config_detect_threshold_title"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/fragment_config_detect_threshold_default"/>
+
+        <EditTextPreference
+            android:key="detect_count"
+            android:summary="@string/fragment_config_detect_count_summary"
+            android:title="@string/fragment_config_detect_count_title"
+            android:inputType="number"
+            android:defaultValue="@string/fragment_config_detect_count_default"/>
+
+        <EditTextPreference
+            android:key="detect_delay"
+            android:title="@string/fragment_config_detect_delay_title"
+            android:summary="@string/fragment_config_detect_delay_summary"
+            android:inputType="number"
+            android:defaultValue="@string/fragment_config_detect_delay_default"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/fragment_config_filter_category_title">
+
+        <EditTextPreference
+            android:key="filter_threshold"
+            android:title="@string/fragment_config_filter_threshold_title"
+            android:summary="@string/fragment_config_filter_threshold_summary"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/fragment_config_filter_threshold_default"/>
+
+        <EditTextPreference
+            android:key="filter_log"
+            android:title="@string/fragment_config_filter_log_title"
+            android:summary="@string/fragment_config_filter_log_summary"
+            android:inputType="number"
+            android:defaultValue="@string/fragment_config_filter_log_default"/>
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="@string/fragment_config_blob_category_title">
+
+        <EditTextPreference
+            android:key="blob_color"
+            android:title="@string/fragment_config_blob_color_title"
+            android:summary="@string/fragment_config_blob_color_summary"
+            android:inputType="number"
+            android:defaultValue="@string/fragment_config_blob_color_default"/>
+
+        <EditTextPreference
+            android:key="blob_min_area"
+            android:title="@string/fragment_config_blob_min_area_title"
+            android:summary="@string/fragment_config_blob_min_area_summary"
+            android:inputType="number"
+            android:defaultValue="@string/fragment_config_blob_min_area_default"/>
+
+        <EditTextPreference
+            android:key="blob_min_circularity"
+            android:title="@string/fragment_config_blob_min_circularity_title"
+            android:summary="@string/fragment_config_blob_min_circularity_summary"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/fragment_config_blob_min_circularity_default"/>
+
+        <EditTextPreference
+            android:key="blob_min_convexity"
+            android:title="@string/fragment_config_blob_min_convexity_title"
+            android:summary="@string/fragment_config_blob_min_convexity_summary"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/fragment_config_blob_min_convexity_default"/>
+
+        <EditTextPreference
+            android:key="blob_min_inertia"
+            android:title="@string/fragment_config_blob_min_inertia_title"
+            android:summary="@string/fragment_config_blob_min_inertia_summary"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/fragment_config_blob_min_inertia_default"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
