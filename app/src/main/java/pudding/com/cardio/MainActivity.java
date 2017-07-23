@@ -8,12 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
-import android.view.WindowManager;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.Mat;
@@ -32,6 +32,7 @@ public class MainActivity
     private static String LOG_TAG = "Cardio.MainActivity";
 
     private int layout; //Current Layout
+    private boolean layoutConfig; //True - Camera View shown, False - Graph View Shown
 
     private BlobLocator locator;
 
@@ -57,7 +58,8 @@ public class MainActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if(requestCode == MainActivity.PERMISSION_CAMERA_REQUEST_CODE) {
@@ -81,7 +83,6 @@ public class MainActivity
 
         //Camera Permission Accepted
         this.setupLayout(this.layout);
-        this.setupCamera();
     }
 
 
@@ -100,7 +101,6 @@ public class MainActivity
             getMenuInflater().inflate(R.menu.menu_display, menu);
         else if(this.layout == MainActivity.LAYOUT_CONFIG)
             getMenuInflater().inflate(R.menu.menu_config, menu);
-
         return true;
     }
 
@@ -110,11 +110,11 @@ public class MainActivity
 
         if(item.getItemId() == R.id.menu_item_config)
         {
-
+            this.setupLayout(MainActivity.LAYOUT_CONFIG);
         }
         else if(item.getItemId() == R.id.menu_item_toggle)
         {
-
+            this.toggleConfigUI();
         }
 
         return true;
@@ -131,7 +131,6 @@ public class MainActivity
         //Locate LED
         Mat frame = inputFrame.gray();
 
-
         return frame;
     }
 
@@ -139,15 +138,12 @@ public class MainActivity
     public void onCameraViewStopped() {
     }
 
-    private void setupCamera()
+    private void setupCameraView()
     {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         CameraBridgeViewBase cameraView = (CameraBridgeViewBase) findViewById(R.id.view_cv_camera);
         cameraView.setCvCameraViewListener(this);
         cameraView.enableView();
         cameraView.setVisibility(SurfaceView.VISIBLE);
-        //TODO: REMOVE BELOW
-        cameraView.bringToFront();
     }
 
     //UI Methods
@@ -155,16 +151,86 @@ public class MainActivity
     {
         if(layout == MainActivity.LAYOUT_CONFIG)
         {
-
+            this.setupCameraView();
+            this.setContentView(R.layout.activity_main_configuration);
+            this.showGraphFragment();
         }
         else //Display Layout
         {
+            this.setupCameraView();
             this.setContentView(R.layout.activity_main_display);
+            this.showGraphFragment();
+            this.showConfigFragment();
+        }
+    }
+
+    private void showGraphFragment()
+    {
+        GraphFragment graphFragment =
+                (GraphFragment)getFragmentManager().
+                        findFragmentById(R.id.frame_fragment_display);
+
+        if(graphFragment == null)
+        {
+            graphFragment = GraphFragment.newInstance(null);
+            getFragmentManager().beginTransaction().add(R.id.frame_fragment_graph, graphFragment);
+        }
+
+        if(layout == MainActivity.LAYOUT_CONFIG)
+        {
+            graphFragment.addGraph(getString(R.string.graph_signal_name),
+                    ContextCompat.getColor(this, R.color.view_graph_color_signal),
+                    ContextCompat.getColor(this, R.color.view_graph_color_signal));
+
+            graphFragment.addGraph(getString(R.string.graph_mean_name),
+                    ContextCompat.getColor(this, R.color.view_graph_color_mean),
+                    ContextCompat.getColor(this, R.color.view_graph_color_mean));
+
+            graphFragment.addGraph(getString(R.string.graph_standard_deviation_name),
+                    ContextCompat.getColor(this, R.color.view_graph_color_standard_deviation),
+                    ContextCompat.getColor(this, R.color.view_graph_color_standard_deviation));
+        }
+        else //Display Layout
+        {
+            graphFragment.addGraph(getString(R.string.graph_beat_name),
+                    ContextCompat.getColor(this, R.color.view_graph_color_beat),
+                    ContextCompat.getColor(this, R.color.view_graph_color_beat));
+        }
+    }
+
+    private void showConfigFragment()
+    {
+        if(this.layout == MainActivity.LAYOUT_CONFIG) {
+            ConfigFragment configFragment =
+                    (ConfigFragment)
+                            getFragmentManager().findFragmentById(R.id.frame_fragment_config);
+
+            if (configFragment == null) {
+                configFragment = ConfigFragment.newInstance();
+                getFragmentManager().beginTransaction().
+                        add(R.id.frame_fragment_config, configFragment);
+            }
+        }
+
+    }
+
+    private void toggleConfigUI()
+    {
+        if(this.layoutConfig == true)
+        {
+            //Camera View Shown currently
+            getFragmentManager().findFragmentById(R.id.frame_fragment_graph).getView().
+                    bringToFront();
+        }
+        else
+        {
+            //Graph View Shown currently
+            findViewById(R.id.view_cv_camera).bringToFront();
         }
     }
 
     //Utility Methods
-    private void loadConfig() {
+    public void loadConfig() {
         SharedPreferences preferences =
                 getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE_NAME, 0);
 

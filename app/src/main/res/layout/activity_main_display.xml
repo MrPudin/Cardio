@@ -12,20 +12,20 @@
 
         <org.opencv.android.JavaCameraView
             android:id="@+id/view_cv_camera"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:visibility="visible"
             opencv:show_fps="true"
             opencv:camera_id="any"/>
 
         <FrameLayout
-            android:id="@+id/frame_display_fragment_graph"
+            android:id="@+id/frame_fragment_graph"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/frame_display_fragment_display"
+        android:id="@+id/frame_fragment_display"
         android:layout_width="match_parent"
         android:layout_height="0sp"
         android:layout_weight="0.5" />
