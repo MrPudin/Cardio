@@ -39,6 +39,7 @@ public class MainActivity
     private boolean layoutConfigFlag; //True - Camera View shown, False - Graph View Shown
 
     private BlobLocator locator;
+    private PeakFilter filter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,8 +98,7 @@ public class MainActivity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        //TODO: REMOVE COMMMENT
-        //outState.putInt(MainActivity.STATE_LAYOUT, this.layout);
+        outState.putInt(MainActivity.STATE_LAYOUT, this.layout);
     }
 
     //Menu Methods
@@ -143,7 +143,7 @@ public class MainActivity
         this.stopCameraView();
     }
 
-    //Camera Methods
+    //CV Methods
     @Override
     public void onCameraViewStarted(int width, int height) {
 
@@ -152,30 +152,29 @@ public class MainActivity
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         //Locate LED
-        Mat frame = inputFrame.gray();
+        Mat displayFrame = inputFrame.rgba();
+        Mat processFrame = inputFrame.gray();
 
-        boolean result = this.locator.locate(frame);
+        boolean locationResult = this.locator.locate(processFrame);
 
         if(this.layout == MainActivity.LAYOUT_CONFIG)
         {
-            //Mark Blob Location
-            Point center = this.locator.getBlobLocation();
-            Size size = new Size(this.locator.getBlobSize(), this.locator.getBlobSize());
+            //Draw Marker
+            if(locationResult == true)
+                this.drawMarker(displayFrame, this.locator.getBlobLocation(),
+                    new Size(this.locator.getBlobSize(), this.locator.getBlobSize()));
 
-            Point pointUpperLeft = new Point(center.x - (size.width / 2.0),
-                    center.y - (size.height / 2.0));
-            Point pointBottomLeft = new Point(center.x + (size.width / 2.0),
-                    center.y + (size.height / 2.0));
+            double values[] = processFrame.get((int)this.locator.getBlobLocation().y,
+                    (int) this.locator.getBlobLocation().x);
 
-            Scalar color = new Scalar(135, 211, 124);
+            this
 
-            Imgproc.rectangle(frame, pointUpperLeft, pointBottomLeft, color, 5);
+            return displayFrame;
         }
         else //Display Layout
         {
-
+            return processFrame;
         }
-        return frame;
     }
 
     @Override
@@ -206,6 +205,18 @@ public class MainActivity
         CameraBridgeViewBase cameraView =
                 ((CameraBridgeViewBase)this.findViewById(R.id.view_cv_camera));
         if(cameraView != null) cameraView.disableView();
+    }
+
+    private void drawMarker(Mat mat, Point center, Size size)
+    {
+        Point pointUpperLeft = new Point(center.x - (size.width / 2.0),
+                center.y - (size.height / 2.0));
+        Point pointBottomLeft = new Point(center.x + (size.width / 2.0),
+                center.y + (size.height / 2.0));
+
+        Scalar color = new Scalar(135, 211, 124);
+
+        Imgproc.rectangle(mat, pointUpperLeft, pointBottomLeft, color, 5);
     }
 
     //UI Methods
@@ -291,7 +302,6 @@ public class MainActivity
                         add(R.id.frame_fragment_config, configFragment).commit();
             }
         }
-
     }
 
     private void toggleConfigUI()
@@ -320,25 +330,41 @@ public class MainActivity
     }
 
     //Utility Methods
-    public void loadConfig() {
+    private void interpretValue(double value)
+    {
+
+    }
+
+    public void loadConfig()
+    {
         SharedPreferences preferences =
                 getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE_NAME, 0);
 
+        //Filter
+        this.filter.setPeakThreshold(
+                Double.parseDouble(
+                        preferences.getString("filter_threshold", "1.0")));
+        this.filter.setLogSize(
+                Integer.parseInt(
+                        preferences.getString("filter_log", "3")));
+
+        //Computer Vision
         this.locator.setBlobColor(
-                Float.parseFloat(
+                Double.parseDouble(
                         preferences.getString("blob_color", "255.0")));
         this.locator.setBlobMinArea(
-                Float.parseFloat(
+                Double.parseDouble(
                         preferences.getString("blob_min_area", "100.0")));
         this.locator.setBlobMinCircularity(
-                Float.parseFloat(
+                Double.parseDouble(
                         preferences.getString("blob_min_circularity", "0.8")));
         this.locator.setBlobMinConvexity(
-                Float.parseFloat(
+                Double.parseDouble(
                         preferences.getString("blob_min_convexity", "0.7")));
         this.locator.setBlobMinInertia(
-                Float.parseFloat(
+                Double.parseDouble(
                         preferences.getString("blob_min_inertia", "0.7")));
         this.locator.loadConfig();
+
     }
 }
