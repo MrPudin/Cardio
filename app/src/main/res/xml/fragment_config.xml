@@ -6,10 +6,24 @@
         android:title="@string/fragment_config_general_category_title">
 
         <EditTextPreference
-            android:key="data_frequency"
+            android:key="pacemaker_duration"
+            android:title="@string/fragment_config_pacemaker_duration_title"
+            android:summary="@string/fragment_config_pacemaker_duration_summary"
+            android:inputType="number"
+            android:defaultValue="@string/fragment_config_pacemaker_duration_default"/>
+
+        <EditTextPreference
+            android:key="pacemaker_log"
+            android:title="@string/fragment_config_pacemaker_log_title"
+            android:summary="@string/fragment_config_pacemaker_log_summary"
+            android:inputType="number"
+            android:defaultValue="@string/fragment_config_pacemaker_log_default"/>
+
+        <EditTextPreference
+            android:key="pacemaker_period"
             android:title="@string/fragment_config_general_frequency_title"
             android:summary="@string/fragment_config_general_frequency_summary"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:defaultValue="@string/fragment_config_general_frequency_default"/>
 
     </PreferenceCategory>

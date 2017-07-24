@@ -28,18 +28,20 @@ public class MainActivity
         implements CameraBridgeViewBase.CvCameraViewListener2
 {
     public static String SHARED_PREFERENCE_FILE_NAME = "pudding.com.cardio.config";
-
     private static String STATE_LAYOUT = "main_activity_main_state";
     private static int LAYOUT_DISPLAY = 0;
     private static int LAYOUT_CONFIG = 1;
     private static int PERMISSION_CAMERA_REQUEST_CODE = 1;
     private static String LOG_TAG = "Cardio.MainActivity";
 
+    //User Interface
     private int layout; //Current Layout
     private boolean layoutConfigFlag; //True - Camera View shown, False - Graph View Shown
 
+    //Utility Objects
     private BlobLocator locator;
     private PeakFilter filter;
+    private PaceMaker paceMaker;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,6 +61,8 @@ public class MainActivity
 
         //Setup Utility Objects
         this.locator = new BlobLocator();
+        this.filter = new PeakFilter();
+        this.paceMaker = new PaceMaker();
         this.loadConfig();
 
         //Load UI
@@ -339,6 +343,19 @@ public class MainActivity
     {
         SharedPreferences preferences =
                 getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE_NAME, 0);
+
+        //General
+        this.paceMaker.setSeedDuration(
+                Integer.parseInt(
+                        preferences.getString("pacemaker_duration", "2500")));
+
+        this.paceMaker.setPeriod(
+                Integer.parseInt(
+                        preferences.getString("pacemaker_duration", "60000")));
+
+        this.paceMaker.setLogSize(
+                Integer.parseInt(
+                        preferences.getString("pacemaker_log", "3")));
 
         //Filter
         this.filter.setPeakThreshold(
