@@ -26,20 +26,6 @@
     <string name="fragment_config_general_frequency_summary">Set the frequency data is sampled from the circuit.</string>
     <string name="fragment_config_general_frequency_default">0.1</string>
 
-    <string name="fragment_config_detect_category_title">Detection</string>
-    <string name="fragment_config_detect_threshold_title">Threshold</string>
-    <string name="fragment_config_detect_threshold_summary">Set the detection threshold, which is a value between 1.0 and 0.0 that determines if a detection operation is successful.
-    If the decimal ratio of successful attempts at detecting the circuit and total attempts at detecting the circuit is greater or equal to the threshold,
-    the detection operation would be considered as successful</string>
-    <string name="fragment_config_detect_threshold_default">0.01</string>
-    <string name="fragment_config_detect_count_title">Repetitions</string>
-    <string name="fragment_config_detect_count_summary">Set the number of repetitions of attempting to detect the circuit to run in a single detection operation.
-    A higher repetition count would result in better detection, but takes more time.</string>
-    <string name="fragment_config_detect_count_default">100</string>
-    <string name="fragment_config_detect_delay_title">Delay</string>
-    <string name="fragment_config_detect_delay_summary">Set the delay between repetitions of attempting to detect the circuit in nanoseconds</string>
-    <string name="fragment_config_detect_delay_default">100</string>
-
     <string name="fragment_config_filter_category_title">Filter</string>
     <string name="fragment_config_filter_threshold_title">Threshold</string>
     <string name="fragment_config_filter_threshold_summary">Set the filter threshold, which is the defined as the minimum number of standard deviations the signal is away from the mean.
