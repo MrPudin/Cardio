@@ -19,9 +19,9 @@ public class BlobLocator {
     private static String LOG_TAG = "Cardio.BlobLocator";
 
     //Detector
-    FeatureDetector detector;
-    Point blobLocation;
-    double blobSize;
+    private FeatureDetector detector;
+    private Point blobLocation;
+    private double blobSize;
 
     //Detector Parameters
     private double blobColor;
@@ -40,6 +40,8 @@ public class BlobLocator {
         this.blobMinInertia = 0.7;
 
         this.detector = FeatureDetector.create(FeatureDetector.SIMPLEBLOB);
+        this.blobLocation = new Point(0.0, 0.0);
+        this.blobSize = 0.0;
         this.loadConfig();
 
     }
@@ -163,11 +165,13 @@ public class BlobLocator {
     }
 
     //Getter - Blob Information
-    public Point getBlobLocation() {
-        return blobLocation;
+    public Point getBlobLocation(){
+        //Adjustment from Image Reduction Operation
+        return new Point(blobLocation.x * 4.0, blobLocation.y * 4.0);
     }
 
     public double getBlobSize() {
-        return blobSize;
+        //Adjustment from Image Reduction Operation
+        return this.blobSize * 4.0;
     }
 }

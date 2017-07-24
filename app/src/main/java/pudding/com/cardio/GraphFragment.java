@@ -21,6 +21,7 @@ import com.androidplot.xy.XYSeries;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class GraphFragment extends Fragment {
     private static String STATE_DATA = "graph_fragment_state_data";
@@ -45,6 +46,16 @@ public class GraphFragment extends Fragment {
         return fragment;
     }
 
+    public GraphFragment() {
+        this.lock = new ReentrantLock();
+        this.cursor = new Point(0, 0);
+
+        this.xData = new HashMap<>();
+        this.yData = new HashMap<>();
+
+        this.color = new HashMap<>();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,12 +68,6 @@ public class GraphFragment extends Fragment {
             this.splitData(data);
             this.updateCursor();
         }
-        else
-        {
-            this.xData = new HashMap<>();
-            this.xData = new HashMap<>();
-        }
-
     }
 
     @Nullable
@@ -84,16 +89,23 @@ public class GraphFragment extends Fragment {
             }
         });
 
-        this.draw();
+        this.draw(); //Draw Predefined Data
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(GraphFragment.STATE_DATA, this.mergeData());
     }
 
     public void addGraph(String name, int colorGraph, int colorVertex)
     {
         this.lock.lock();
         this.xData.put(name , new ArrayList<Integer>());
-        this.xData.put(name , new ArrayList<Integer>());
+        this.yData.put(name , new ArrayList<Integer>());
         this.color.put(name, new Pair<Integer, Integer>(colorGraph, colorVertex));
         this.lock.unlock();
 
@@ -119,28 +131,32 @@ public class GraphFragment extends Fragment {
     //Utility Methods
     private void draw()
     {
-        GraphFragment.this.graphView.clear();
+        if(this.xData.size() > 0 && this.yData.size() > 0)
+            if(this.graphView != null)
+            {
+                this.lock.lock();
 
-        this.lock.lock();
+                this.graphView.clear();
 
-        //Load Data into Graph View
-        for (String graphName : this.xData.keySet()) {
-            final XYSeries series =
-                    new SimpleXYSeries(
-                            this.xData.get(graphName), this.yData.get(graphName), graphName);
+                //Load Data into Graph View
+                for (String graphName : this.xData.keySet()) {
+                    final XYSeries series =
+                            new SimpleXYSeries(
+                                    this.xData.get(graphName), this.yData.get(graphName), graphName);
 
-            final LineAndPointFormatter formatter =
-                    new LineAndPointFormatter(this.color.get(graphName).first,
-                            this.color.get(graphName).second,
-                            Color.TRANSPARENT,
-                            null);
+                    final LineAndPointFormatter formatter =
+                            new LineAndPointFormatter(this.color.get(graphName).first,
+                                    this.color.get(graphName).second,
+                                    Color.TRANSPARENT,
+                                    null);
 
-            GraphFragment.this.graphView.addSeries(series, formatter);
-        }
+                    GraphFragment.this.graphView.addSeries(series, formatter);
+                }
 
-        this.lock.unlock();
+                this.lock.unlock();
 
-        GraphFragment.this.graphView.redraw();
+                this.graphView.redraw();
+            }
     }
 
     private void updateCursor()
@@ -149,6 +165,7 @@ public class GraphFragment extends Fragment {
 
         for(String graphName : this.xData.keySet()) {
             for(int i = 0; i < this.xData.size(); i ++)
+
             {
                 this.cursor.x = Math.max(this.yData.get(graphName).get(i), this.cursor.x);
                 this.cursor.y = Math.max(this.yData.get(graphName).get(i), this.cursor.y);
@@ -167,5 +184,23 @@ public class GraphFragment extends Fragment {
             }
         }
 
+    }
+
+    private HashMap<String, ArrayList<Point>> mergeData()
+    {
+        HashMap<String, ArrayList<Point>> data = new HashMap<>();
+        for(String graphName : this.xData.keySet())
+        {
+            data.put(graphName, new ArrayList<Point>());
+
+            for(int i = 0; i < this.xData.get(graphName).size(); i ++) {
+                Point point =
+                        new Point(this.xData.get(graphName).get(i), this.yData.get(graphName).get(i));
+
+                data.get(graphName).set(i , point);
+            }
+        }
+
+        return data;
     }
 }
