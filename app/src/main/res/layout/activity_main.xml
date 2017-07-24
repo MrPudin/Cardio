@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ViewFlipper
+    android:id="@+id/view_flipper"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:opencv="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <!-- Display Layout -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:opencv="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0sp"
+            android:layout_weight="0.5">
+
+            <FrameLayout
+                android:id="@+id/frame_fragment_display_graph"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+
+            <org.opencv.android.JavaCameraView
+                android:id="@+id/view_cv_camera"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0"
+                android:visibility="visible"
+                opencv:show_fps="true"
+                opencv:camera_id="any"/>
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/frame_fragment_data_display"
+            android:layout_width="match_parent"
+            android:layout_height="0sp"
+            android:layout_weight="0.5" />
+
+    </LinearLayout>
+
+    <!-- Configuration Layout -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0sp"
+            android:layout_weight="0.5">
+
+            <FrameLayout
+                android:id="@+id/frame_fragment_calibrate_graph"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <org.opencv.android.JavaCameraView
+                android:id="@+id/view_calibrate_camera"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                android:alpha="0.0"
+                app:show_fps="true"
+                app:camera_id="any"/>
+
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:id="@+id/frame_fragment_config"
+            android:layout_width="match_parent"
+            android:layout_height="0sp"
+            android:layout_weight="0.5" />
+
+    </LinearLayout>
+</ViewFlipper>
