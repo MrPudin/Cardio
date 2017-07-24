@@ -30,7 +30,7 @@
 
     <string name="fragment_config_pacemaker_period_title">Period</string>
     <string name="fragment_config_pacemaker_period_summary">Sets the time period in milliseconds of pace computed by the pacemaker.
-    To change the heartrate output to beats per minute, set this configuration to 60000 milliseconds.
+    To change the heartrate output to beats per minute, set this configuration to 60000 milliseconds.</string>
     <string name="fragment_config_pacemaker_period_default">60000</string>
 
     <string name="fragment_config_pacemaker_log_title">Log Size</string>

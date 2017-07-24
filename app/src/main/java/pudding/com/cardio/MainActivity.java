@@ -171,8 +171,6 @@ public class MainActivity
             double values[] = processFrame.get((int)this.locator.getBlobLocation().y,
                     (int) this.locator.getBlobLocation().x);
 
-            this
-
             return displayFrame;
         }
         else //Display Layout
