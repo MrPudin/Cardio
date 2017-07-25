@@ -3,7 +3,6 @@ package pudding.com.cardio;
 import android.app.Fragment;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Pair;
@@ -18,6 +17,8 @@ import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
 
+import org.opencv.core.Point;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
@@ -28,13 +29,13 @@ public class GraphFragment extends Fragment {
 
     private XYPlot graphView;
 
-    private HashMap<String,ArrayList<Integer>> xData;
-    private HashMap<String,ArrayList<Integer>> yData;
+    private HashMap<String,ArrayList<Double>> xData;
+    private HashMap<String,ArrayList<Double>> yData;
+    private Point offset;
     private HashMap<String, Pair<Integer, Integer>> color;
 
-    private Point cursor;
-
     private Lock lock;
+
 
 
     public static GraphFragment newInstance(@Nullable HashMap<String, ArrayList<Point>> data) {
@@ -48,7 +49,7 @@ public class GraphFragment extends Fragment {
 
     public GraphFragment() {
         this.lock = new ReentrantLock();
-        this.cursor = new Point(0, 0);
+        this.offset = new Point(0, 0);
 
         this.xData = new HashMap<>();
         this.yData = new HashMap<>();
@@ -66,7 +67,6 @@ public class GraphFragment extends Fragment {
                     ((HashMap<String, ArrayList<Point>>)
                             savedInstanceState.getSerializable(GraphFragment.STATE_DATA));
             this.splitData(data);
-            this.updateCursor();
         }
     }
 
@@ -104,9 +104,11 @@ public class GraphFragment extends Fragment {
     public void addGraph(String name, int colorGraph, int colorVertex)
     {
         this.lock.lock();
-        this.xData.put(name , new ArrayList<Integer>());
-        this.yData.put(name , new ArrayList<Integer>());
+
+        this.xData.put(name , new ArrayList<Double>());
+        this.yData.put(name , new ArrayList<Double>());
         this.color.put(name, new Pair<Integer, Integer>(colorGraph, colorVertex));
+
         this.lock.unlock();
 
         this.draw();
@@ -115,13 +117,13 @@ public class GraphFragment extends Fragment {
     public void addPoint(String graphName, Point point)
     {
         this.lock.lock();
-        //Split data
-        this.xData.get(graphName).add(point.x);
-        this.yData.get(graphName).add(point.y);
 
-        //Update Cursor
-        this.cursor.x = Math.max(this.cursor.x, point.x);
-        this.cursor.y = Math.max(this.cursor.y, point.y);
+        //Adjust Data
+        Point adjustPoint = new Point(point.x - this.offset.x, point.y - this.offset.y);
+
+        //Split data
+        this.xData.get(graphName).add(adjustPoint.x);
+        this.yData.get(graphName).add(adjustPoint.y);
 
         this.lock.unlock();
 
@@ -159,22 +161,9 @@ public class GraphFragment extends Fragment {
             }
     }
 
-    private void updateCursor()
-    {
-        if(this.cursor == null) this.cursor = new Point(0, 0);
-
-        for(String graphName : this.xData.keySet()) {
-            for(int i = 0; i < this.xData.size(); i ++)
-
-            {
-                this.cursor.x = Math.max(this.yData.get(graphName).get(i), this.cursor.x);
-                this.cursor.y = Math.max(this.yData.get(graphName).get(i), this.cursor.y);
-            }
-        }
-    }
-
     private void splitData(HashMap<String, ArrayList<Point>> data)
     {
+        this.lock.lock();
         for(String graphName : data.keySet())
         {
             for(Point pt : data.get(graphName))
@@ -184,10 +173,14 @@ public class GraphFragment extends Fragment {
             }
         }
 
+
+        this.lock.unlock();
     }
 
     private HashMap<String, ArrayList<Point>> mergeData()
     {
+        this.lock.lock();
+
         HashMap<String, ArrayList<Point>> data = new HashMap<>();
         for(String graphName : this.xData.keySet())
         {
@@ -196,11 +189,22 @@ public class GraphFragment extends Fragment {
             for(int i = 0; i < this.xData.get(graphName).size(); i ++) {
                 Point point =
                         new Point(this.xData.get(graphName).get(i), this.yData.get(graphName).get(i));
-
                 data.get(graphName).set(i , point);
             }
         }
 
+        this.lock.unlock();
+
         return data;
+    }
+
+    public Point getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Point offset) {
+        this.lock.lock();
+        this.offset = offset;
+        this.lock.unlock();
     }
 }
