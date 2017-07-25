@@ -53,7 +53,7 @@ public class PeakFilter {
 
 
     //Utility Methods
-    private double computeMean()
+    protected double computeMean()
     {
         if(cacheMeanValid == true) return this.cacheMean;
 
@@ -66,7 +66,7 @@ public class PeakFilter {
         return this.cacheMean;
     }
 
-    private double computeStandardDeviation()
+    protected double computeStandardDeviation()
     {
         if(cacheStandardDeviationValid == true) return this.cacheStandardDeviation;
 

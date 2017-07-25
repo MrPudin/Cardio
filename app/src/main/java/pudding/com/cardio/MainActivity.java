@@ -161,15 +161,16 @@ public class MainActivity
 
         boolean locationResult = this.locator.locate(processFrame);
 
+        double value = processFrame.get((int)this.locator.getBlobLocation().y,
+                (int) this.locator.getBlobLocation().x)[0];
+        this.process(value);
+
         if(this.layout == MainActivity.LAYOUT_CONFIG)
         {
             //Draw Marker
             if(locationResult == true)
                 this.drawMarker(displayFrame, this.locator.getBlobLocation(),
                     new Size(this.locator.getBlobSize(), this.locator.getBlobSize()));
-
-            double values[] = processFrame.get((int)this.locator.getBlobLocation().y,
-                    (int) this.locator.getBlobLocation().x);
 
             return displayFrame;
         }
@@ -234,18 +235,18 @@ public class MainActivity
         if(layout == MainActivity.LAYOUT_CONFIG)
         {
             this.setupCameraView();
-            this.showGraphFragment();
-            this.showConfigFragment();
+            this.setupGraphFragment();
+            this.setupConfigFragment();
         }
         else //Display Layout
         {
             this.setupCameraView();
-            this.showGraphFragment();
+            this.setupGraphFragment();
         }
 
     }
 
-    private void showGraphFragment()
+    private void setupGraphFragment()
     {
         if(layout == MainActivity.LAYOUT_CONFIG)
         {
@@ -271,6 +272,8 @@ public class MainActivity
             graphFragment.addGraph(getString(R.string.graph_standard_deviation_name),
                     ContextCompat.getColor(this, R.color.view_graph_color_standard_deviation),
                     ContextCompat.getColor(this, R.color.view_graph_color_standard_deviation));
+
+            graphFragment.setOffset(new Point(0.0, 0.0)); //Reset Offset
         }
         else //Display Layout
         {
@@ -288,10 +291,57 @@ public class MainActivity
             graphFragment.addGraph(getString(R.string.graph_beat_name),
                     ContextCompat.getColor(this, R.color.view_graph_color_beat),
                     ContextCompat.getColor(this, R.color.view_graph_color_beat));
+
+            graphFragment.setOffset(new Point(0.0, 0.0)); //Reset Offset
         }
     }
 
-    private void showConfigFragment()
+    private void writeGraphFragment(double value, boolean peak, double mean,
+                                    double standard_deviation)
+    {
+        if(this.layout == MainActivity.LAYOUT_CONFIG)
+        {
+            //Update Graph
+            GraphFragment graphFragment = (GraphFragment)getFragmentManager().
+                    findFragmentById(R.id.frame_fragment_calibrate_graph);
+            if(graphFragment != null)
+            {
+                if(graphFragment.getOffset().y == 0.0) graphFragment.setOffset(
+                        new Point(0.0, System.currentTimeMillis()));
+
+                //Add Data
+                graphFragment.addPoint(getString(R.string.graph_signal_name),
+                        new Point(value, System.currentTimeMillis()));
+
+                graphFragment.addPoint(getString(R.string.graph_mean_name),
+                        new Point(mean, System.currentTimeMillis()));
+
+                graphFragment.addPoint(getString(R.string.graph_standard_deviation_name),
+                        new Point(standard_deviation,
+                                System.currentTimeMillis()));
+            }
+
+        }
+        else //Layout Display
+        {
+            //Update Graph
+            GraphFragment graphFragment = (GraphFragment)getFragmentManager().
+                    findFragmentById(R.id.frame_fragment_display_graph);
+            if(graphFragment != null)
+            {
+                if(graphFragment.getOffset().y == 0.0) graphFragment.setOffset(
+                        new Point(0.0, System.currentTimeMillis()));
+                //Add Data
+                if(peak == true) graphFragment.addPoint(getString(R.string.graph_beat_name),
+                        new Point(1.0, System.currentTimeMillis()));
+
+                else graphFragment.addPoint(getString(R.string.graph_beat_name),
+                        new Point(0.0, System.currentTimeMillis()));
+            }
+        }
+    }
+
+    private void setupConfigFragment()
     {
         if(this.layout == MainActivity.LAYOUT_CONFIG) {
             ConfigFragment configFragment =
@@ -332,9 +382,16 @@ public class MainActivity
     }
 
     //Utility Methods
-    private void interpretValue(double value)
+    private void process(double value)
     {
+        //Process
+        boolean peak = this.filter.determinePeak(value);
+        if(peak == true) this.paceMaker.seed();
+        double pace = this.paceMaker.pace();
 
+        //Update UI
+        this.writeGraphFragment(value, peak, this.filter.computeMean(),
+                this.filter.computeStandardDeviation());
     }
 
     public void loadConfig()
@@ -349,7 +406,7 @@ public class MainActivity
 
         this.paceMaker.setPeriod(
                 Integer.parseInt(
-                        preferences.getString("pacemaker_duration", "60000")));
+                        preferences.getString("pacemaker_period", "60000")));
 
         this.paceMaker.setLogSize(
                 Integer.parseInt(

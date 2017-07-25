@@ -27,7 +27,7 @@ public class PaceMaker {
     {
         if(System.currentTimeMillis() - this.seedBegin >= this.seedDuration) //Seeding Finished
         {
-            this.pace(1000);
+            this.pace();
 
             this.seedBegin = System.currentTimeMillis();
             this.seedCount = 0;
@@ -44,7 +44,7 @@ public class PaceMaker {
 
     }
 
-    public double pace(int period)
+    public double pace()
     {
         if (this.seedBegin == -1 || System.currentTimeMillis() - this.seedBegin < this.seedDuration)
             return -1.0; //Invalid state to compute pace
