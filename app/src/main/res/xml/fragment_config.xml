@@ -21,10 +21,10 @@
 
         <EditTextPreference
             android:key="pacemaker_period"
-            android:title="@string/fragment_config_general_frequency_title"
-            android:summary="@string/fragment_config_general_frequency_summary"
+            android:title="@string/fragment_config_pacemaker_period_title"
+            android:summary="@string/fragment_config_pacemaker_period_summary"
             android:inputType="number"
-            android:defaultValue="@string/fragment_config_general_frequency_default"/>
+            android:defaultValue="@string/fragment_config_pacemaker_period_default"/>
 
     </PreferenceCategory>
 

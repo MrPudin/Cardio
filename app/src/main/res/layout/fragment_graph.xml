@@ -12,6 +12,5 @@
         ap:lineLabels="left|bottom"
         ap:rangeTitle="@string/fragment_graph_range"
         ap:domainTitle="@string/fragment_graph_domain"
-        ap:renderMode="use_background_thread"
         />
 </LinearLayout>

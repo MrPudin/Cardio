@@ -19,6 +19,12 @@
     <string name="graph_standard_deviation_name">Standard Deviation</string>
     <string name="fragment_graph_range">Value</string>
     <string name="fragment_graph_domain">Time</string>
+    
+    <!-- Display -->
+    <string name="display_pace_title">Beat Rate</string>
+    <string name="display_computing_title">Computing...</string>
+    <string name="display_locator_detected_title">Circuit Detected</string>
+    <string name="display_locator_missing_title">Circuit Missing</string>
 
     <!-- Preferences -->
     <string name="fragment_config_general_category_title">General</string>
@@ -37,11 +43,6 @@
     <string name="fragment_config_pacemaker_log_summary">Sets the size of the pacemaker log, which helps the pacemaker function reliably.
     A higher value helps the pacemaker more reliably, but causes the pacemaker to take a longer time to process signals.</string>
     <string name="fragment_config_pacemaker_log_default">3</string>
-
-
-    <string name="fragment_config_general_frequency_title">Frequency</string>
-    <string name="fragment_config_general_frequency_summary">Set the frequency data is sampled from the circuit.</string>
-    <string name="fragment_config_general_frequency_default">0.1</string>
 
     <string name="fragment_config_filter_category_title">Filter</string>
     <string name="fragment_config_filter_threshold_title">Threshold</string>
