@@ -19,9 +19,7 @@ import android.widget.ViewFlipper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
 
 public class MainActivity
@@ -164,16 +162,18 @@ public class MainActivity
 
         double value = processFrame.get((int)this.locator.getBlobLocation().y,
                 (int) this.locator.getBlobLocation().x)[0];
+
         this.process(value);
 
         if(this.layout == MainActivity.LAYOUT_CONFIG)
         {
-            //Draw Marker
             if(locationResult == true)
-                this.drawMarker(displayFrame, this.locator.getBlobLocation(),
+                MatFragment.drawMarker(displayFrame, this.locator.getBlobLocation(),
                     new Size(this.locator.getBlobSize(), this.locator.getBlobSize()));
 
-            return displayFrame;
+            this.writeBitmapFragment(displayFrame);
+
+            return processFrame;
         }
         else //Display Layout
         {
@@ -187,15 +187,7 @@ public class MainActivity
 
     private void setupCameraView()
     {
-        CameraBridgeViewBase cameraView = null;
-        if(this.layout == MainActivity.LAYOUT_CONFIG)
-        {
-            cameraView = (CameraBridgeViewBase) findViewById(R.id.view_calibrate_camera);
-        }
-        else
-        {
-            cameraView = (CameraBridgeViewBase) findViewById(R.id.view_cv_camera);
-        }
+        CameraBridgeViewBase cameraView = (CameraBridgeViewBase) findViewById(R.id.view_cv_camera);
 
         if(cameraView != null)
         {
@@ -211,17 +203,6 @@ public class MainActivity
         if(cameraView != null) cameraView.disableView();
     }
 
-    private void drawMarker(Mat mat, Point center, Size size)
-    {
-        Point pointUpperLeft = new Point(center.x - (size.width / 2.0),
-                center.y - (size.height / 2.0));
-        Point pointBottomLeft = new Point(center.x + (size.width / 2.0),
-                center.y + (size.height / 2.0));
-
-        Scalar color = new Scalar(135, 211, 124);
-
-        Imgproc.rectangle(mat, pointUpperLeft, pointBottomLeft, color, 5);
-    }
 
     //UI Methods
     private void setupLayout(int layout)
@@ -238,6 +219,7 @@ public class MainActivity
             this.setupCameraView();
             this.setupGraphFragment();
             this.setupConfigFragment();
+            this.setupBitmapFragment();
         }
         else //Display Layout
         {
@@ -247,6 +229,37 @@ public class MainActivity
 
     }
 
+    //Bitmap Fragment
+    private void setupBitmapFragment()
+    {
+        if(layout == MainActivity.LAYOUT_CONFIG)
+        {
+            MatFragment matFragment =
+                    (MatFragment)getFragmentManager().
+                            findFragmentById(R.id.frame_fragment_calibrate_bitmap);
+
+            if(matFragment == null)
+            {
+                matFragment = MatFragment.newInstance();
+                getFragmentManager().beginTransaction().add(R.id.frame_fragment_calibrate_bitmap,
+                        matFragment).commit();
+            }
+        }
+    }
+
+    private void writeBitmapFragment(Mat mat)
+    {
+        MatFragment matFragment =
+                (MatFragment)getFragmentManager().
+                        findFragmentById(R.id.frame_fragment_calibrate_bitmap);
+
+        if(matFragment != null)
+        {
+            matFragment.putMat(mat);
+        }
+    }
+
+    //Graph Fragment
     private void setupGraphFragment()
     {
         if(layout == MainActivity.LAYOUT_CONFIG)
@@ -318,7 +331,7 @@ public class MainActivity
                         new Point(mean, System.currentTimeMillis()));
 
                 graphFragment.addPoint(getString(R.string.graph_standard_deviation_name),
-                        new Point(standard_deviation,
+                        new Point(mean + standard_deviation,
                                 System.currentTimeMillis()));
             }
 
@@ -342,6 +355,7 @@ public class MainActivity
         }
     }
 
+    //Config Fragment
     private void setupConfigFragment()
     {
         if(this.layout == MainActivity.LAYOUT_CONFIG) {
@@ -361,25 +375,29 @@ public class MainActivity
     {
         if(this.layoutConfigFlag == true)
         {
-            //Camera View Shown currently
-            findViewById(R.id.view_calibrate_camera).setAlpha((float) 0.0); //Camera View Poof..
+            //Mat shown currently
             View view = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView();
             if(view != null)
                 getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView().
                     setAlpha((float) 1.0);
 
+            View bitmapView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_bitmap).getView();
+            if(bitmapView != null)
+                getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_bitmap).getView().
+                        setAlpha((float) 0.0);
         }
         else
         {
-            //Graph View Shown currently
-            getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView().
-                    setAlpha((float) 0.0); //Graph Fragment Poof..
-            findViewById(R.id.view_calibrate_camera).setAlpha((float) 1.0);
-            View view = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView();
-            if(view != null)
+            //Graph Shown currently
+            View bitmapView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_bitmap).getView();
+            if(bitmapView != null)
+                getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_bitmap).getView().
+                        setAlpha((float) 1.0);
+
+            View graphView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView();
+            if(graphView != null)
                 getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView().
                         setAlpha((float) 0.0);
-
         }
 
         this.layoutConfigFlag = !this.layoutConfigFlag; //Toggle Flag

@@ -61,14 +61,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-            <org.opencv.android.JavaCameraView
-                android:id="@+id/view_calibrate_camera"
+            <FrameLayout
+                android:id="@+id/frame_fragment_calibrate_bitmap"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="visible"
-                android:alpha="0.0"
-                app:show_fps="true"
-                app:camera_id="any"/>
+                android:layout_height="match_parent"/>
+
 
         </FrameLayout>
 
