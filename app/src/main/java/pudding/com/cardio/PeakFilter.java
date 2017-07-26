@@ -1,7 +1,5 @@
 package pudding.com.cardio;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 public class PeakFilter {
@@ -35,24 +33,25 @@ public class PeakFilter {
         this.cacheMeanValid = false;
         this.cacheStandardDeviationValid = false;
 
-        if(this.log.size() == logSize) this.log.remove(1);
+        if(this.log.size() == logSize) this.log.remove(0);
         this.log.add(value);
     }
 
     public boolean determinePeak(double value)
     {
-        if(this.log.size() > this.logSize)
+        boolean result = false;
+        if(this.log.size() >= this.logSize)
         {
             double deviation =  value - this.computeMean();
             double zScore = deviation / this.computeStandardDeviation();
 
-            Log.d("PeakFilter", "Found Peak");
-            if(zScore > this.peakThreshold) return true; //Found Peak
+
+            if(zScore > this.peakThreshold) result = true; //Found Peak
         }
 
-        Log.d("PeakFilter", "NO Peak");
         this.seed(value);
-        return false;
+
+        return result;
     }
 
 
@@ -92,6 +91,7 @@ public class PeakFilter {
 
         this.logSize = logSize;
     }
+
 
     public void setPeakThreshold(double peakThreshold) {
         this.peakThreshold = peakThreshold;

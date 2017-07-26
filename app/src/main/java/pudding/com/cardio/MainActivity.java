@@ -331,7 +331,7 @@ public class MainActivity
                         new Point(mean, System.currentTimeMillis()));
 
                 graphFragment.addPoint(getString(R.string.graph_standard_deviation_name),
-                        new Point(mean + standard_deviation,
+                        new Point(standard_deviation,
                                 System.currentTimeMillis()));
             }
 
@@ -412,8 +412,12 @@ public class MainActivity
         double pace = this.paceMaker.pace();
 
         //Update UI
-        this.writeGraphFragment(value, peak, this.filter.computeMean(),
-                this.filter.computeStandardDeviation());
+        double adjustedStandardDeviation = this.filter.computeMean() +
+                (this.filter.computeStandardDeviation() * Double.parseDouble(
+                        getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE_NAME, 0).
+                                getString("filter_threshold", "1.0")));
+
+        this.writeGraphFragment(value, peak, this.filter.computeMean(), adjustedStandardDeviation);
     }
 
     public void loadConfig()
