@@ -19,9 +19,9 @@ public class BlobLocator {
     private static String LOG_TAG = "Cardio.BlobLocator";
 
     //Detector
-    private FeatureDetector detector;
-    private Point blobLocation;
-    private double blobSize;
+    FeatureDetector detector;
+    Point blobLocation;
+    double blobSize;
 
     //Detector Parameters
     private double blobColor;

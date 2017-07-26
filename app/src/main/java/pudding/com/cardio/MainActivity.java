@@ -13,7 +13,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ViewFlipper;
 
 import org.opencv.android.CameraBridgeViewBase;
@@ -180,8 +182,6 @@ public class MainActivity
         {
             return processFrame;
         }
-
-
     }
 
     @Override
