@@ -54,7 +54,7 @@ public class PaceMaker {
         double pace = (this.seedCount / this.seedDuration) * (this.seedDuration) / ((double)period);
 
         //Maintain Log
-        if(log.size() == logSize) this.log.remove(this.log.size() - 1);
+        if(log.size() == logSize) this.log.remove(1);
         this.log.add(pace);
 
         return this.logMean();

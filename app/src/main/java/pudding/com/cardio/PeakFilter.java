@@ -33,7 +33,7 @@ public class PeakFilter {
         this.cacheMeanValid = false;
         this.cacheStandardDeviationValid = false;
 
-        if(this.log.size() == logSize) this.log.remove(this.log.size() - 1);
+        if(this.log.size() == logSize) this.log.remove(1);
         this.log.add(value);
     }
 
