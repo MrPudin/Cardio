@@ -13,9 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SurfaceView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ViewFlipper;
 
 import org.opencv.android.CameraBridgeViewBase;
@@ -153,30 +151,29 @@ public class MainActivity
     //CV Methods
     @Override
     public void onCameraViewStarted(int width, int height) {
+
     }
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         //Locate LED
+        Mat displayFrame = inputFrame.rgba();
         Mat processFrame = inputFrame.gray();
 
         boolean locationResult = this.locator.locate(processFrame);
 
-
         double value = processFrame.get((int)this.locator.getBlobLocation().y,
                 (int) this.locator.getBlobLocation().x)[0];
-
-
         this.process(value);
 
         if(this.layout == MainActivity.LAYOUT_CONFIG)
         {
             //Draw Marker
             if(locationResult == true)
-                this.drawMarker(processFrame, this.locator.getBlobLocation(),
+                this.drawMarker(displayFrame, this.locator.getBlobLocation(),
                     new Size(this.locator.getBlobSize(), this.locator.getBlobSize()));
 
-            return processFrame;
+            return displayFrame;
         }
         else //Display Layout
         {
@@ -192,9 +189,13 @@ public class MainActivity
     {
         CameraBridgeViewBase cameraView = null;
         if(this.layout == MainActivity.LAYOUT_CONFIG)
-            cameraView = (CameraBridgeViewBase)findViewById(R.id.view_cv_camera);
+        {
+            cameraView = (CameraBridgeViewBase) findViewById(R.id.view_calibrate_camera);
+        }
         else
-            cameraView = (CameraBridgeViewBase)findViewById(R.id.view_cv_camera);
+        {
+            cameraView = (CameraBridgeViewBase) findViewById(R.id.view_cv_camera);
+        }
 
         if(cameraView != null)
         {
@@ -205,11 +206,8 @@ public class MainActivity
 
     private void stopCameraView()
     {
-        CameraBridgeViewBase cameraView = null;
-        if(this.layout == MainActivity.LAYOUT_CONFIG)
-            cameraView = (CameraBridgeViewBase)findViewById(R.id.view_cv_camera);
-        else
-            cameraView = (CameraBridgeViewBase)findViewById(R.id.view_cv_camera);
+        CameraBridgeViewBase cameraView =
+                ((CameraBridgeViewBase)this.findViewById(R.id.view_cv_camera));
         if(cameraView != null) cameraView.disableView();
     }
 
@@ -320,7 +318,7 @@ public class MainActivity
                         new Point(mean, System.currentTimeMillis()));
 
                 graphFragment.addPoint(getString(R.string.graph_standard_deviation_name),
-                        new Point(mean + standard_deviation,
+                        new Point(standard_deviation,
                                 System.currentTimeMillis()));
             }
 
@@ -330,7 +328,6 @@ public class MainActivity
             //Update Graph
             GraphFragment graphFragment = (GraphFragment)getFragmentManager().
                     findFragmentById(R.id.frame_fragment_display_graph);
-
             if(graphFragment != null)
             {
                 if(graphFragment.getOffset().y == 0.0) graphFragment.setOffset(
@@ -364,18 +361,24 @@ public class MainActivity
     {
         if(this.layoutConfigFlag == true)
         {
-            findViewById(R.id.view_cv_camera).setAlpha((float) 0.0); //Camera View Poof..
-            View graphView =  getFragmentManager().
-                    findFragmentById(R.id.frame_fragment_calibrate_graph).getView();
-            if(graphView != null) graphView.setAlpha((float)1.0);
+            //Camera View Shown currently
+            findViewById(R.id.view_calibrate_camera).setAlpha((float) 0.0); //Camera View Poof..
+            View view = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView();
+            if(view != null)
+                getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView().
+                    setAlpha((float) 1.0);
+
         }
         else
         {
             //Graph View Shown currently
-            View graphView =  getFragmentManager().
-                findFragmentById(R.id.frame_fragment_calibrate_graph).getView();
-            if(graphView != null) graphView.setAlpha((float)0.0); //Graph View Poof..
-            findViewById(R.id.view_cv_camera).setAlpha((float) 1.0); //Camera View Poof..
+            getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView().
+                    setAlpha((float) 0.0); //Graph Fragment Poof..
+            findViewById(R.id.view_calibrate_camera).setAlpha((float) 1.0);
+            View view = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView();
+            if(view != null)
+                getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView().
+                        setAlpha((float) 0.0);
 
         }
 

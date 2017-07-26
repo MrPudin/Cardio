@@ -25,6 +25,15 @@
                 android:layout_height="match_parent"
                 android:visibility="visible" />
 
+            <org.opencv.android.JavaCameraView
+                android:id="@+id/view_cv_camera"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0"
+                android:visibility="visible"
+                opencv:show_fps="true"
+                opencv:camera_id="any"/>
+
         </RelativeLayout>
 
         <FrameLayout
@@ -42,29 +51,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0sp"
             android:layout_weight="0.5">
 
-
-
-            <org.opencv.android.JavaCameraView
-                android:id="@+id/view_cv_camera"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:alpha="0.0"
-                android:visibility="visible"
-                opencv:show_fps="true"
-                opencv:camera_id="any"/>
-
             <FrameLayout
                 android:id="@+id/frame_fragment_calibrate_graph"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="visible"/>
+                android:layout_height="match_parent"/>
 
-        </RelativeLayout>
+            <org.opencv.android.JavaCameraView
+                android:id="@+id/view_calibrate_camera"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                android:alpha="0.0"
+                app:show_fps="true"
+                app:camera_id="any"/>
+
+        </FrameLayout>
 
 
         <FrameLayout
