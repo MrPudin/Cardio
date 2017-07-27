@@ -51,10 +51,10 @@ public class PaceMaker {
 
         //Compute pace in seed per minute
         int duration = (int) (System.currentTimeMillis() - this.seedBegin);
-        double pace = (this.seedCount / this.seedDuration) * (this.seedDuration) / ((double)period);
+        double pace = (this.seedCount / (double) duration) * (double)this.period;
 
         //Maintain Log
-        if(log.size() == logSize) this.log.remove(0);
+        if(log.size() >= logSize) this.log.remove(0);
         this.log.add(pace);
 
         return this.logMean();
