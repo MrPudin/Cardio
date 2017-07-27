@@ -29,8 +29,7 @@ public class GraphFragment extends Fragment {
     private Point offset;
     private HashMap<String, Pair<Integer, Integer>> color;
 
-
-
+    private int graphWidth = 2;
 
     public static GraphFragment newInstance(@Nullable HashMap<String, ArrayList<Point>> data) {
         Bundle args = new Bundle();
@@ -48,6 +47,8 @@ public class GraphFragment extends Fragment {
         this.yData = new HashMap<>();
 
         this.color = new HashMap<>();
+
+        this.graphWidth = 75;
     }
 
     @Override
@@ -99,6 +100,13 @@ public class GraphFragment extends Fragment {
         //Adjust Data
         Point adjustPoint = new Point(point.x - this.offset.x, point.y - this.offset.y);
 
+        //Maintain Data
+        if(this.xData.get(graphName).size() >= this.graphWidth)
+        {
+            this.xData.get(graphName).remove(0);
+            this.yData.get(graphName).remove(0);
+        }
+
         //Split data
         this.xData.get(graphName).add(adjustPoint.x);
         this.yData.get(graphName).add(adjustPoint.y);
@@ -120,7 +128,7 @@ public class GraphFragment extends Fragment {
                 for (String graphName : this.xData.keySet()) {
                     final XYSeries series =
                             new SimpleXYSeries(
-                                    this.yData.get(graphName), this.xData.get(graphName), graphName);
+                                    this.xData.get(graphName), this.yData.get(graphName), graphName);
 
                     final LineAndPointFormatter formatter =
                             new LineAndPointFormatter(this.color.get(graphName).first,
@@ -174,5 +182,9 @@ public class GraphFragment extends Fragment {
 
     public void setOffset(Point offset) {
         this.offset = offset;
+    }
+
+    public void setGraphWidth(int graphWidth) {
+        this.graphWidth = graphWidth;
     }
 }

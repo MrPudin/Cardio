@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -156,14 +157,11 @@ public class MainActivity
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         //Locate LED
         Mat displayFrame = inputFrame.rgba();
-        Mat processFrame = inputFrame.gray();
+        Mat frame = inputFrame.gray();
+        Mat processFrame = this.locator.process(inputFrame.gray());
 
         boolean locationResult = this.locator.locate(processFrame);
-
-        double value = processFrame.get((int)this.locator.getBlobLocation().y,
-                (int) this.locator.getBlobLocation().x)[0];
-
-        this.process(value);
+        this.process(this.locator.getValue(processFrame));
 
         if(this.layout == MainActivity.LAYOUT_CONFIG)
         {
@@ -173,11 +171,10 @@ public class MainActivity
 
             this.writeBitmapFragment(displayFrame);
 
-            return processFrame;
+            return frame;
         }
         else //Display Layout
         {
-            return processFrame;
         }
     }
 
@@ -288,6 +285,7 @@ public class MainActivity
                     ContextCompat.getColor(this, R.color.view_graph_color_standard_deviation));
 
             graphFragment.setOffset(new Point(0.0, 0.0)); //Reset Offset
+            graphFragment.setGraphWidth(50);
         }
         else //Display Layout
         {
@@ -307,6 +305,7 @@ public class MainActivity
                     ContextCompat.getColor(this, R.color.view_graph_color_beat));
 
             graphFragment.setOffset(new Point(0.0, 0.0)); //Reset Offset
+            graphFragment.setGraphWidth(50);
         }
     }
 
@@ -320,19 +319,18 @@ public class MainActivity
                     findFragmentById(R.id.frame_fragment_calibrate_graph);
             if(graphFragment != null)
             {
-                if(graphFragment.getOffset().y == 0.0) graphFragment.setOffset(
-                        new Point(0.0, System.currentTimeMillis()));
+                if(graphFragment.getOffset().x == 0.0) graphFragment.setOffset(
+                        new Point(System.currentTimeMillis(), 0.0));
 
                 //Add Data
                 graphFragment.addPoint(getString(R.string.graph_signal_name),
-                        new Point(value, System.currentTimeMillis()));
+                        new Point(System.currentTimeMillis(), value));
 
                 graphFragment.addPoint(getString(R.string.graph_mean_name),
-                        new Point(mean, System.currentTimeMillis()));
+                        new Point(System.currentTimeMillis(), mean));
 
                 graphFragment.addPoint(getString(R.string.graph_standard_deviation_name),
-                        new Point(standard_deviation,
-                                System.currentTimeMillis()));
+                        new Point(System.currentTimeMillis(), standard_deviation));
             }
 
         }
@@ -343,14 +341,13 @@ public class MainActivity
                     findFragmentById(R.id.frame_fragment_display_graph);
             if(graphFragment != null)
             {
-                if(graphFragment.getOffset().y == 0.0) graphFragment.setOffset(
-                        new Point(0.0, System.currentTimeMillis()));
+                if(graphFragment.getOffset().x == 0.0) graphFragment.setOffset(
+                        new Point(System.currentTimeMillis(), 0.0));
                 //Add Data
                 if(peak == true) graphFragment.addPoint(getString(R.string.graph_beat_name),
-                        new Point(1.0, System.currentTimeMillis()));
-
+                        new Point(System.currentTimeMillis(), 1.0));
                 else graphFragment.addPoint(getString(R.string.graph_beat_name),
-                        new Point(0.0, System.currentTimeMillis()));
+                        new Point(System.currentTimeMillis(), 0.0));
             }
         }
     }
@@ -391,13 +388,11 @@ public class MainActivity
             //Graph Shown currently
             View bitmapView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_bitmap).getView();
             if(bitmapView != null)
-                getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_bitmap).getView().
-                        setAlpha((float) 1.0);
+                bitmapView.setAlpha((float) 1.0);
 
             View graphView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView();
             if(graphView != null)
-                getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView().
-                        setAlpha((float) 0.0);
+                graphView.setAlpha((float) 0.0);
         }
 
         this.layoutConfigFlag = !this.layoutConfigFlag; //Toggle Flag
@@ -411,6 +406,7 @@ public class MainActivity
         if(peak == true) this.paceMaker.seed();
         double pace = this.paceMaker.pace();
 
+        Log.d(LOG_TAG, "PACE: "  + pace + " bpm");
         //Update UI
         double adjustedStandardDeviation = this.filter.computeMean() +
                 (this.filter.computeStandardDeviation() * Double.parseDouble(
