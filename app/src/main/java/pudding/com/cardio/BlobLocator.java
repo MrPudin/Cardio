@@ -48,7 +48,6 @@ public class BlobLocator {
 
     public boolean locate(Mat mat)
     {
-        mat = this.process(mat);
         MatOfKeyPoint detectPoints = new MatOfKeyPoint();
         this.detector.detect(mat, detectPoints);
 
@@ -67,6 +66,12 @@ public class BlobLocator {
             Log.d(LOG_TAG, "Detection Failed: Could not find blob");
             return false;
         }
+    }
+
+    public double getValue(Mat mat)
+    {
+        return mat.get((int)this.getBlobLocation().y,
+                (int) this.getBlobLocation().x)[0];
     }
 
 
@@ -119,8 +124,7 @@ public class BlobLocator {
     }
 
     //Utility Methods
-    //TODO: Change to Private
-    private Mat process(Mat mat)
+    public Mat process(Mat mat)
     {
         Mat processMat = new Mat(mat.rows() / 4, mat.cols() / 4, mat.type());
         Mat tmpMat = new Mat(mat.rows() / 2, mat.cols() / 2, mat.type());
