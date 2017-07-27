@@ -37,7 +37,7 @@
         </RelativeLayout>
 
         <FrameLayout
-            android:id="@+id/frame_fragment_data_display"
+            android:id="@+id/frame_fragment_display"
             android:layout_width="match_parent"
             android:layout_height="0sp"
             android:layout_weight="0.5" />

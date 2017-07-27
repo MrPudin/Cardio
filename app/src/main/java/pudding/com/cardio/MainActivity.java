@@ -11,16 +11,18 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ViewFlipper;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
+
+import static android.R.attr.value;
 
 
 public class MainActivity
@@ -67,6 +69,9 @@ public class MainActivity
 
         //Load UI
         setContentView(R.layout.activity_main);
+
+        //Keep Screen On
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -158,28 +163,33 @@ public class MainActivity
         //Locate LED
         Mat displayFrame = inputFrame.rgba();
         Mat frame = inputFrame.gray();
-        Mat processFrame = this.locator.process(inputFrame.gray());
-
-        boolean locationResult = this.locator.locate(processFrame);
-        this.process(this.locator.getValue(processFrame));
 
         if(this.layout == MainActivity.LAYOUT_CONFIG)
         {
+            //Draw Marker on Blob Location
+            boolean locationResult = this.locator.locate(frame);
+
             if(locationResult == true)
                 MatFragment.drawMarker(displayFrame, this.locator.getBlobLocation(),
                     new Size(this.locator.getBlobSize(), this.locator.getBlobSize()));
 
             this.writeBitmapFragment(displayFrame);
 
-            return frame;
         }
         else //Display Layout
         {
+
         }
+
+        this.process(frame);
+
+        return frame;
     }
+
 
     @Override
     public void onCameraViewStopped() {
+
     }
 
     private void setupCameraView()
@@ -221,6 +231,7 @@ public class MainActivity
         else //Display Layout
         {
             this.setupCameraView();
+            this.setupDisplayFragment();
             this.setupGraphFragment();
         }
 
@@ -368,6 +379,40 @@ public class MainActivity
         }
     }
 
+    //Display Fragment
+    private void setupDisplayFragment()
+    {
+        if(this.layout == MainActivity.LAYOUT_DISPLAY)
+        {
+            DisplayFragment displayFragment = (DisplayFragment)
+                    getFragmentManager().findFragmentById(R.id.frame_fragment_display);
+
+            if(displayFragment == null)
+            {
+                displayFragment = DisplayFragment.newInstance();
+                getFragmentManager().beginTransaction().
+                        add(R.id.frame_fragment_display, displayFragment).commit();
+            }
+
+            displayFragment.putPace(-1.0);
+            displayFragment.putStatus(false);
+        }
+    }
+
+
+    private void writeDisplayFragment(boolean status, double pace)
+    {
+
+        DisplayFragment displayFragment = (DisplayFragment)
+                getFragmentManager().findFragmentById(R.id.frame_fragment_display);
+
+        if(displayFragment != null)
+        {
+            displayFragment.putStatus(status);
+            displayFragment.putPace(pace);
+        }
+    }
+
     private void toggleConfigUI()
     {
         if(this.layoutConfigFlag == true)
@@ -399,15 +444,8 @@ public class MainActivity
     }
 
     //Utility Methods
-    private void process(double value)
+    private void process(Mat mat)
     {
-        //Process
-        boolean peak = this.filter.determinePeak(value);
-        if(peak == true) this.paceMaker.seed();
-        double pace = this.paceMaker.pace();
-
-        Log.d(LOG_TAG, "PACE: "  + pace + " bpm");
-        //Update UI
         double adjustedStandardDeviation = this.filter.computeMean() +
                 (this.filter.computeStandardDeviation() * Double.parseDouble(
                         getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE_NAME, 0).
