@@ -1,0 +1,11 @@
+Cardio
+Heartbeat Circult Processor
+[About]
+Android Application that process and interprets visual infomation from the FOE 
+coursework circult. Uses OpenCV to detect the LED on the circult, which blinks
+with a heartbeat. Uses the Android Graph View library to diplay the hearbeat 
+information in a graph format.
+
+[Licence and Copyright]
+Copyright (c) 2017. Zhu Zhan Yan.
+Licenced under the MIT licence
