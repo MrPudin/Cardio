@@ -44,20 +44,37 @@ public class DisplayFragment extends Fragment {
     {
         if(this.paceTextView != null)
         {
-            if(pace <= -1.0)
-            {
-                this.statusTextView.setText(R.string.display_status_computing);
-                this.paceTextView.setText("...");
-            }
-            else this.paceTextView.setText(String.format(Locale.getDefault(), "%.1f", pace));
+            final double paceRef = pace;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(paceRef <= -1.0)
+                        DisplayFragment.this.statusTextView.setText(R.string.display_status_computing);
+                    else DisplayFragment.this.paceTextView.
+                            setText(String.format(Locale.getDefault(), "%.1f", paceRef));
+                }
+            });
         }
     }
 
 
     public void putStatus(boolean status)
     {
-        if(status == true) this.statusTextView.setText(R.string.display_status_computing);
-        else this.statusTextView.setText(R.string.display_status_locating);
+        if(this.statusTextView != null) {
+            final boolean statusRef = status;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (statusRef == true) DisplayFragment.this.statusTextView.
+                            setText(R.string.display_status_computing);
+                    else
+                    {
+                        DisplayFragment.this.statusTextView.setText(R.string.display_status_locating);
+                        DisplayFragment.this.paceTextView.setText("...");
+                    }
+                }
+            });
+        }
     }
 
 }
