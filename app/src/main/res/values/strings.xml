@@ -74,4 +74,5 @@
     <string name="fragment_config_blob_min_inertia_summary">A number that determines the minimum inertia requirement.
     The inertia measures how elongated an object is.</string>
     <string name="fragment_config_blob_min_inertia_default">0.7</string>
+    <string name="display_pace_computing">...</string>
 </resources>
