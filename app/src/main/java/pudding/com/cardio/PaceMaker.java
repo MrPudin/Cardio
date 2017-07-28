@@ -27,7 +27,7 @@ public class PaceMaker {
     {
         if(System.currentTimeMillis() - this.seedBegin >= this.seedDuration) //Seeding Finished
         {
-            this.pace();
+            this.compute();
 
             this.seedBegin = System.currentTimeMillis();
             this.seedCount = 0;
@@ -44,14 +44,13 @@ public class PaceMaker {
 
     }
 
-    public double pace()
+    public double compute()
     {
         if (this.seedBegin == -1 || System.currentTimeMillis() - this.seedBegin < this.seedDuration)
-            return -1.0; //Invalid state to compute pace
+            return -1.0; //Invalid state to compute compute
 
-        //Compute pace in seed per minute
-        int duration = (int) (System.currentTimeMillis() - this.seedBegin);
-        double pace = (this.seedCount / (double) duration) * (double)this.period;
+        //Compute compute in seed per minute
+        double pace = (this.seedCount / (double) this.seedDuration) * (double)this.period;
 
         //Maintain Log
         if(log.size() >= logSize) this.log.remove(0);
