@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,6 +72,8 @@ public class GraphFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_graph, container, false);
         this.graphView = (XYPlot)view.findViewById(R.id.view_graph);
+        this.setupGraph(this.graphView);
+
         this.draw(); //Draw Predefined Data
 
         return view;
@@ -96,7 +99,6 @@ public class GraphFragment extends Fragment {
 
     public void addPoint(String graphName, Point point)
     {
-
         //Adjust Data
         Point adjustPoint = new Point(point.x - this.offset.x, point.y - this.offset.y);
 
@@ -135,7 +137,9 @@ public class GraphFragment extends Fragment {
                                     this.color.get(graphName).second,
                                     Color.TRANSPARENT,
                                     null);
-
+                    formatter.getLinePaint().setStrokeWidth((float) 1.0);
+                    formatter.getVertexPaint().setStrokeWidth((float) 0.0);
+                    formatter.getFillPaint().setColor(this.color.get(graphName).first);
 
                     GraphFragment.this.graphView.addSeries(series, formatter);
                 }
@@ -144,6 +148,7 @@ public class GraphFragment extends Fragment {
                 this.graphView.redraw();
             }
     }
+
 
     private void splitData(HashMap<String, ArrayList<Point>> data)
     {
@@ -174,6 +179,18 @@ public class GraphFragment extends Fragment {
 
 
         return data;
+    }
+
+    private void setupGraph(XYPlot graphView)
+    {
+        graphView.getGraph().getDomainGridLinePaint().setColor(Color.TRANSPARENT);
+        graphView.getGraph().getDomainSubGridLinePaint().setColor(Color.TRANSPARENT);
+        graphView.getGraph().getRangeGridLinePaint().setColor(Color.TRANSPARENT);
+        graphView.getGraph().getRangeSubGridLinePaint().setColor(Color.TRANSPARENT);
+
+        graphView.getGraph().getGridBackgroundPaint().setColor(ContextCompat.getColor(getActivity(),
+                R.color.view_graph_color_background));
+
     }
 
     public Point getOffset() {

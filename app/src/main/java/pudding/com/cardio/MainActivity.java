@@ -322,51 +322,62 @@ public class MainActivity
                     ContextCompat.getColor(this, R.color.view_graph_color_beat));
 
             graphFragment.setOffset(new Point(0.0, 0.0)); //Reset Offset
-            graphFragment.setGraphWidth(50);
+            graphFragment.setGraphWidth(30);
         }
     }
 
-    private void writeGraphFragment(double value, boolean peak, double mean,
+    private void writeGraphFragment(boolean located, double value, boolean peak, double mean,
                                     double standard_deviation)
     {
-        if(this.layout == MainActivity.LAYOUT_CONFIG)
-        {
-            //Update Graph
-            GraphFragment graphFragment = (GraphFragment)getFragmentManager().
-                    findFragmentById(R.id.frame_fragment_calibrate_graph);
-            if(graphFragment != null)
+            if (this.layout == MainActivity.LAYOUT_CONFIG) {
+                //Update Graph
+                GraphFragment graphFragment = (GraphFragment) getFragmentManager().
+                        findFragmentById(R.id.frame_fragment_calibrate_graph);
+                if (graphFragment != null) {
+                    if (graphFragment.getOffset().x == 0.0) graphFragment.setOffset(
+                            new Point(System.currentTimeMillis(), 0.0));
+
+                    if(located == true) {
+                        //Add Data
+                        graphFragment.addPoint(getString(R.string.graph_signal_name),
+                                new Point(System.currentTimeMillis(), value));
+
+                        graphFragment.addPoint(getString(R.string.graph_mean_name),
+                                new Point(System.currentTimeMillis(), mean));
+
+                        graphFragment.addPoint(getString(R.string.graph_standard_deviation_name),
+                                new Point(System.currentTimeMillis(), standard_deviation));
+                    }
+                    else
+                    {
+                        graphFragment.addPoint(getString(R.string.graph_signal_name),
+                                new Point(System.currentTimeMillis(), 0.0));
+
+                        graphFragment.addPoint(getString(R.string.graph_mean_name),
+                                new Point(System.currentTimeMillis(),  0.0));
+
+                        graphFragment.addPoint(getString(R.string.graph_standard_deviation_name),
+                                new Point(System.currentTimeMillis(),  0.0));
+                    }
+                }
+
+            } else //Layout Display
             {
-                if(graphFragment.getOffset().x == 0.0) graphFragment.setOffset(
-                        new Point(System.currentTimeMillis(), 0.0));
+                //Update Graph
+                GraphFragment graphFragment = (GraphFragment) getFragmentManager().
+                        findFragmentById(R.id.frame_fragment_display_graph);
+                if (graphFragment != null) {
+                    if (graphFragment.getOffset().x == 0.0) graphFragment.setOffset(
+                            new Point(System.currentTimeMillis(), 0.0));
 
-                //Add Data
-                graphFragment.addPoint(getString(R.string.graph_signal_name),
-                        new Point(System.currentTimeMillis(), value));
-
-                graphFragment.addPoint(getString(R.string.graph_mean_name),
-                        new Point(System.currentTimeMillis(), mean));
-
-                graphFragment.addPoint(getString(R.string.graph_standard_deviation_name),
-                        new Point(System.currentTimeMillis(), standard_deviation));
+                    //Add Data
+                    if (peak == true && located == true) graphFragment.addPoint(getString(R.string.graph_beat_name),
+                            new Point(System.currentTimeMillis(), 1.0));
+                    else graphFragment.addPoint(getString(R.string.graph_beat_name),
+                            new Point(System.currentTimeMillis(), 0.0));
+                }
             }
 
-        }
-        else //Layout Display
-        {
-            //Update Graph
-            GraphFragment graphFragment = (GraphFragment)getFragmentManager().
-                    findFragmentById(R.id.frame_fragment_display_graph);
-            if(graphFragment != null)
-            {
-                if(graphFragment.getOffset().x == 0.0) graphFragment.setOffset(
-                        new Point(System.currentTimeMillis(), 0.0));
-                //Add Data
-                if(peak == true) graphFragment.addPoint(getString(R.string.graph_beat_name),
-                        new Point(System.currentTimeMillis(), 1.0));
-                else graphFragment.addPoint(getString(R.string.graph_beat_name),
-                        new Point(System.currentTimeMillis(), 0.0));
-            }
-        }
     }
 
     //Config Fragment
@@ -468,12 +479,13 @@ public class MainActivity
             public void run() {
                 if(activity.layout == MainActivity.LAYOUT_CONFIG) {
                     //Update Graph Fragment
-                    activity.writeGraphFragment(value, false, mean, adjustedStandardDeviation);
+                    activity.writeGraphFragment(located, value, false, mean,
+                            adjustedStandardDeviation);
 
                 }
                 else //Display Fragment
                 {
-                    activity.writeGraphFragment(value, peak, 0.0, 0.0);
+                    activity.writeGraphFragment(located, value, peak, 0.0, 0.0);
                     activity.writeDisplayFragment(located, pace);
                 }
             }
