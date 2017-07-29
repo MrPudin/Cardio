@@ -36,7 +36,7 @@ public class MainActivity
 
     //User Interface
     private int layout; //Current Layout
-    private boolean layoutConfigFlag; //True - Camera View shown, False - Graph View Shown
+    private boolean layoutConfigFlag; //True -  Mat View shown, False - Graph View Shown
 
     //Utility Objects
     private BlobLocator locator;
@@ -109,6 +109,19 @@ public class MainActivity
         outState.putInt(MainActivity.STATE_LAYOUT, this.layout);
     }
 
+    @Override
+    public void onBackPressed() {
+        if(this.layout == MainActivity.LAYOUT_CONFIG)
+        {
+            this.setupLayout(MainActivity.LAYOUT_DISPLAY);
+            this.invalidateOptionsMenu();
+        }
+        else //Display Layout
+        {
+            this.finish();
+        }
+    }
+
     //Menu Methods
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -127,7 +140,7 @@ public class MainActivity
         if(item.getItemId() == R.id.menu_item_config)
         {
             this.setupLayout(MainActivity.LAYOUT_CONFIG);
-            invalidateOptionsMenu();
+            this.invalidateOptionsMenu();
         }
         else if(item.getItemId() == R.id.menu_item_toggle)
         {
