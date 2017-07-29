@@ -52,12 +52,14 @@
         android:layout_height="match_parent">
 
         <FrameLayout
+            android:background="@color/view_calibrate_color_background"
             android:layout_width="match_parent"
             android:layout_height="0sp"
             android:layout_weight="0.5">
 
             <FrameLayout
                 android:id="@+id/frame_fragment_calibrate_graph"
+                android:alpha="0.0"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 

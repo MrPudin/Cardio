@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.ViewFlipper;
 
 import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
@@ -267,7 +268,10 @@ public class MainActivity
                     matFragment.drawMarker(mat, this.locator.getBlobLocation(),
                             new Size(this.locator.getBlobSize(), this.locator.getBlobSize()));
 
-                matFragment.putMat(mat);
+                Mat rotateMat = new Mat(mat.rows(), mat.cols(), mat.type());
+                Core.rotate(mat, rotateMat, Core.ROTATE_90_COUNTERCLOCKWISE);
+
+                matFragment.putMat(rotateMat);
             }
         }
     }
@@ -437,6 +441,7 @@ public class MainActivity
             //Mat shown currently
             View graphView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).
                     getView();
+            findViewById(R.id.frame_fragment_calibrate_graph).setAlpha((float) 1.0);
             if(graphView != null) graphView.setAlpha((float) 1.0);
 
             View bitmapView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_bitmap).getView();
