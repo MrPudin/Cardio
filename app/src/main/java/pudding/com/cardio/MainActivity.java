@@ -22,8 +22,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
 
-import static android.R.attr.value;
-
 
 public class MainActivity
         extends AppCompatActivity
@@ -99,6 +97,7 @@ public class MainActivity
         }
 
         //Camera Permission Accepted
+        //Setup UI
         this.setupLayout(this.layout);
     }
 
@@ -161,27 +160,12 @@ public class MainActivity
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         //Locate LED
-        Mat displayFrame = inputFrame.rgba();
         Mat frame = inputFrame.gray();
+        Mat displayFrame = inputFrame.rgba();
+        Mat processFrame = this.locator.process(frame);
 
-        if(this.layout == MainActivity.LAYOUT_CONFIG)
-        {
-            //Draw Marker on Blob Location
-            boolean locationResult = this.locator.locate(frame);
-
-            if(locationResult == true)
-                MatFragment.drawMarker(displayFrame, this.locator.getBlobLocation(),
-                    new Size(this.locator.getBlobSize(), this.locator.getBlobSize()));
-
-            this.writeBitmapFragment(displayFrame);
-
-        }
-        else //Display Layout
-        {
-
-        }
-
-        this.process(frame);
+        this.writeBitmapFragment(displayFrame,  this.locator.detect(processFrame));
+        this.processFrame(processFrame);
 
         return frame;
     }
@@ -255,15 +239,23 @@ public class MainActivity
         }
     }
 
-    private void writeBitmapFragment(Mat mat)
+    private void writeBitmapFragment(Mat mat, boolean detect)
     {
-        MatFragment matFragment =
-                (MatFragment)getFragmentManager().
-                        findFragmentById(R.id.frame_fragment_calibrate_bitmap);
-
-        if(matFragment != null)
+        if(this.layout == MainActivity.LAYOUT_CONFIG)
         {
-            matFragment.putMat(mat);
+            MatFragment matFragment =
+                    (MatFragment)getFragmentManager().
+                            findFragmentById(R.id.frame_fragment_calibrate_bitmap);
+
+            if(matFragment != null)
+            {
+                //Draw Marker on Blob Location
+                if(detect == true)
+                    matFragment.drawMarker(mat, this.locator.getBlobLocation(),
+                            new Size(this.locator.getBlobSize(), this.locator.getBlobSize()));
+
+                matFragment.putMat(mat);
+            }
         }
     }
 
@@ -297,12 +289,13 @@ public class MainActivity
 
             graphFragment.setOffset(new Point(0.0, 0.0)); //Reset Offset
             graphFragment.setGraphWidth(50);
+
         }
         else //Display Layout
         {
             GraphFragment graphFragment =
                     (GraphFragment)getFragmentManager().
-                            findFragmentById(R.id.frame_fragment_data_display);
+                            findFragmentById(R.id.frame_fragment_display_graph);
 
             if(graphFragment == null)
             {
@@ -409,49 +402,76 @@ public class MainActivity
         if(displayFragment != null)
         {
             displayFragment.putStatus(status);
-            displayFragment.putPace(pace);
+            if(status == true) displayFragment.putPace(pace);
         }
     }
 
     private void toggleConfigUI()
     {
-        if(this.layoutConfigFlag == true)
+        if(this.layoutConfigFlag == false)
         {
             //Mat shown currently
-            View view = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView();
-            if(view != null)
-                getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView().
-                    setAlpha((float) 1.0);
+            View graphView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).
+                    getView();
+            if(graphView != null) graphView.setAlpha((float) 1.0);
 
             View bitmapView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_bitmap).getView();
-            if(bitmapView != null)
-                getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_bitmap).getView().
-                        setAlpha((float) 0.0);
+            if(bitmapView != null) bitmapView.setAlpha((float) 0.0);
         }
         else
         {
             //Graph Shown currently
             View bitmapView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_bitmap).getView();
-            if(bitmapView != null)
-                bitmapView.setAlpha((float) 1.0);
+            if(bitmapView != null) bitmapView.setAlpha((float) 1.0);
 
             View graphView = getFragmentManager().findFragmentById(R.id.frame_fragment_calibrate_graph).getView();
-            if(graphView != null)
-                graphView.setAlpha((float) 0.0);
+            if(graphView != null) graphView.setAlpha((float) 0.0);
         }
 
         this.layoutConfigFlag = !this.layoutConfigFlag; //Toggle Flag
     }
 
     //Utility Methods
-    private void process(Mat mat)
+    private void processFrame(Mat mat)
     {
-        double adjustedStandardDeviation = this.filter.computeMean() +
-                (this.filter.computeStandardDeviation() * Double.parseDouble(
+        final MainActivity activity = this;
+
+        //Compute Pace
+        final boolean located = this.locator.locate();
+        final double value = (located == true) ? this.locator.getValue(mat) : 0.0;
+        final double adjustedStandardDeviation = activity.filter.computeMean() +
+                (activity.filter.computeStandardDeviation() * Double.parseDouble(
                         getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE_NAME, 0).
                                 getString("filter_threshold", "1.0")));
+        final double mean = this.filter.computeMean();
 
-        this.writeGraphFragment(value, peak, this.filter.computeMean(), adjustedStandardDeviation);
+        final boolean peak = this.filter.determinePeak(value);
+
+        final double pace = this.paceMaker.compute();
+
+        //Update UI
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(activity.layout == MainActivity.LAYOUT_CONFIG) {
+                    //Update Graph Fragment
+                    activity.writeGraphFragment(value, false, mean, adjustedStandardDeviation);
+
+                }
+                else //Display Fragment
+                {
+                    activity.writeGraphFragment(value, peak, 0.0, 0.0);
+                    activity.writeDisplayFragment(located, pace);
+                }
+            }
+        });
+
+        //Utility Object Input
+        if(located == true)
+        {
+            this.filter.seed(value);
+            if(peak == true) this.paceMaker.seed();
+        }
     }
 
     public void loadConfig()
@@ -462,7 +482,11 @@ public class MainActivity
         //General
         this.paceMaker.setSeedDuration(
                 Integer.parseInt(
-                        preferences.getString("pacemaker_duration", "2500")));
+                        preferences.getString("pacemaker_duration", "3000")));
+
+        this.locator.setLocateDelay(
+                Integer.parseInt(
+                        preferences.getString("pacemaker_duration", "3000")));
 
         this.paceMaker.setPeriod(
                 Integer.parseInt(
