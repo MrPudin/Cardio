@@ -30,6 +30,10 @@ public class BlobLocator {
     private double blobMinConvexity;
     private double blobMinInertia;
 
+    //Location
+    private int locateDelay;
+    private long locateBegin;
+
     public BlobLocator()
     {
         //Detector Default Parameters
@@ -44,9 +48,11 @@ public class BlobLocator {
         this.blobSize = 0.0;
         this.loadConfig();
 
+        this.locateBegin = -1;
+        this.locateDelay = 4000;
     }
 
-    public boolean locate(Mat mat)
+    public boolean detect(Mat mat)
     {
         MatOfKeyPoint detectPoints = new MatOfKeyPoint();
         this.detector.detect(mat, detectPoints);
@@ -58,6 +64,9 @@ public class BlobLocator {
             this.blobSize = point.size;
 
             Log.d(LOG_TAG, "Detection Succeeded: Found blob of size" + this.blobSize);
+
+            this.locateBegin = System.currentTimeMillis();
+
             return true;
         }
         else
@@ -68,10 +77,15 @@ public class BlobLocator {
         }
     }
 
+    public boolean locate()
+    {
+        if((System.currentTimeMillis() - this.locateBegin) <= this.locateDelay) return true;
+        else return false;
+    }
+
     public double getValue(Mat mat)
     {
-        return mat.get((int)this.getBlobLocation().y,
-                (int) this.getBlobLocation().x)[0];
+        return mat.get((int)this.blobLocation.y, (int)this.blobLocation.x)[0];
     }
 
 
@@ -143,7 +157,6 @@ public class BlobLocator {
         Imgproc.dilate(processMat, processMat, kernel);
         Imgproc.erode(processMat, processMat, kernel);
 
-
         return processMat;
     }
 
@@ -166,6 +179,10 @@ public class BlobLocator {
 
     public void setBlobMinInertia(double blobMinInertia) {
         this.blobMinInertia = blobMinInertia;
+    }
+
+    public void setLocateDelay(int locateDelay) {
+        this.locateDelay = locateDelay;
     }
 
     //Getter - Blob Information

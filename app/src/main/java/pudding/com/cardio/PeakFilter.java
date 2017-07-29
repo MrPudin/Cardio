@@ -49,8 +49,6 @@ public class PeakFilter {
             if(zScore > this.peakThreshold) result = true; //Found Peak
         }
 
-        this.seed(value);
-
         return result;
     }
 
