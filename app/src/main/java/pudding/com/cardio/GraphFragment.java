@@ -128,20 +128,24 @@ public class GraphFragment extends Fragment {
 
                 //Load Data into Graph View
                 for (String graphName : this.xData.keySet()) {
-                    final XYSeries series =
-                            new SimpleXYSeries(
-                                    this.xData.get(graphName), this.yData.get(graphName), graphName);
+                    if(this.xData.get(graphName) != null && this.xData.get(graphName).size() > 0
+                            && this.yData.get(graphName) != null &&
+                            this.yData.get(graphName).size() > 0) {
+                        final XYSeries series =
+                                new SimpleXYSeries(
+                                        this.xData.get(graphName), this.yData.get(graphName), graphName);
 
-                    final LineAndPointFormatter formatter =
-                            new LineAndPointFormatter(this.color.get(graphName).first,
-                                    this.color.get(graphName).second,
-                                    Color.TRANSPARENT,
-                                    null);
-                    formatter.getLinePaint().setStrokeWidth((float) 1.0);
-                    formatter.getVertexPaint().setStrokeWidth((float) 0.0);
-                    formatter.getFillPaint().setColor(this.color.get(graphName).first);
+                        final LineAndPointFormatter formatter =
+                                new LineAndPointFormatter(this.color.get(graphName).first,
+                                        this.color.get(graphName).second,
+                                        Color.TRANSPARENT,
+                                        null);
+                        formatter.getLinePaint().setStrokeWidth((float) 1.0);
+                        formatter.getVertexPaint().setStrokeWidth((float) 0.0);
+                        formatter.getFillPaint().setColor(this.color.get(graphName).first);
 
-                    GraphFragment.this.graphView.addSeries(series, formatter);
+                        GraphFragment.this.graphView.addSeries(series, formatter);
+                    }
                 }
 
 
@@ -156,6 +160,11 @@ public class GraphFragment extends Fragment {
         {
             for(Point pt : data.get(graphName))
             {
+                if(this.xData.get(graphName) == null)
+                    this.xData.put(graphName, new ArrayList<Double>());
+                if(this.yData.get(graphName) == null)
+                    this.yData.put(graphName, new ArrayList<Double>());
+
                 this.xData.get(graphName).add(pt.x);
                 this.yData.get(graphName).add(pt.y);
             }

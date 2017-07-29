@@ -3,6 +3,7 @@ package pudding.com.cardio;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,11 +63,19 @@ public class DisplayFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (statusRef == true) DisplayFragment.this.statusTextView.
-                            setText(R.string.display_status_computing);
+                    if (statusRef == true) {
+                        DisplayFragment.this.statusTextView.setText(R.string.display_status_computing);
+                        DisplayFragment.this.statusTextView.setBackgroundColor(
+                                ContextCompat.getColor(getActivity(),
+                                        R.color.view_display_status_compute_color_background));
+                    }
                     else
                     {
                         DisplayFragment.this.statusTextView.setText(R.string.display_status_locating);
+                        DisplayFragment.this.statusTextView.setBackgroundColor(
+                                ContextCompat.getColor(getActivity(),
+                                        R.color.view_display_status_locate_color_background));
+
                         DisplayFragment.this.paceTextView.setText("...");
                     }
                 }

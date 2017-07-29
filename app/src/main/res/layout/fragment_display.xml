@@ -17,15 +17,21 @@
             android:gravity="center"
             android:text="@string/display_pace_computing"
             android:textAlignment="center"
-            android:textSize="100sp" />
+            android:textSize="100sp"
+            android:background="@color/view_display_pace_color_background"/>
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="0sp"
             android:layout_height="match_parent"
             android:layout_weight="0.3"
+            android:background="@color/view_display_pace_color_background"
+            android:fontFamily="sans-serif"
             android:gravity="center"
             android:text="@string/display_pace_title"
-            android:textSize="18sp" />
+            android:textAllCaps="false"
+            android:textColor="@color/ap_gray"
+            android:textSize="32sp" />
 
     </LinearLayout>
 
@@ -34,7 +40,10 @@
         android:layout_width="match_parent"
         android:layout_height="0sp"
         android:layout_weight="0.3"
+        android:background="@color/view_display_status_locate_color_background"
+        android:fontFamily="monospace"
         android:gravity="center"
         android:text="@string/display_status_locating"
-        android:textSize="36sp" />
+        android:textColor="@color/view_display_status_color"
+        android:textSize="30sp" />
 </LinearLayout>

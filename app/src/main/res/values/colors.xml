@@ -4,6 +4,13 @@
     <color name="colorPrimaryDark">#c0392b</color>
     <color name="colorAccent">#e67e22</color>
 
+    <!-- Display -->
+    <color name="view_display_pace_color_background">#EEEEEE</color>
+    <color name="view_display_status_color">#ffffff</color>
+    <color name="view_display_status_locate_color_background">#bdc3c7</color>
+    <color name="view_display_status_compute_color_background">#f4B350</color>
+
+
     <!-- Calibrate -->
     <color name="view_calibrate_color_background">#000000</color>
 
@@ -13,6 +20,5 @@
     <color name="view_graph_color_signal">#e74c3c</color>
     <color name="view_graph_color_mean">#f1c40f</color>
     <color name="view_graph_color_standard_deviation">#e67e22</color>
-    
-</resources>
 
+</resources>
