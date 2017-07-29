@@ -31,7 +31,7 @@
     <string name="fragment_config_pacemaker_duration_title">Duration</string>
     <string name="fragment_config_pacemaker_duration_summary">Set the duration in milliseconds data is collected to compute the heartbeat.
         A lower duration would compute the heartbeat faster, but would cause the reading to be less precise.</string>
-    <string name="fragment_config_pacemaker_duration_default">4000</string>
+    <string name="fragment_config_pacemaker_duration_default">3000</string>
 
     <string name="fragment_config_pacemaker_period_title">Period</string>
     <string name="fragment_config_pacemaker_period_summary">Sets the time period in milliseconds of pace computed by the pacemaker.
