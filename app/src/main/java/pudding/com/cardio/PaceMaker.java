@@ -47,9 +47,9 @@ public class PaceMaker {
     public double compute()
     {
         if (this.seedBegin == -1 || System.currentTimeMillis() - this.seedBegin < this.seedDuration)
-            return -1.0; //Invalid state to compute compute
+            return -1.0; //Invalid state to compute pace
 
-        //Compute compute in seed per minute
+        //Compute pace in seed per minute
         double pace = (this.seedCount / (double) this.seedDuration) * (double)this.period;
 
         //Maintain Log

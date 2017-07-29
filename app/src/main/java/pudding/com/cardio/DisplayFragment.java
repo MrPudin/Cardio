@@ -26,7 +26,6 @@ public class DisplayFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
     }
 
     @Nullable
@@ -40,7 +39,7 @@ public class DisplayFragment extends Fragment {
         return view;
     }
 
-    public void putPace(double pace)
+    public void putPace(final double pace)
     {
         if(this.paceTextView != null)
         {
@@ -48,9 +47,7 @@ public class DisplayFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(paceRef <= -1.0)
-                        DisplayFragment.this.statusTextView.setText(R.string.display_status_computing);
-                    else DisplayFragment.this.paceTextView.
+                    if(pace != -1.0) DisplayFragment.this.paceTextView.
                             setText(String.format(Locale.getDefault(), "%.1f", paceRef));
                 }
             });
