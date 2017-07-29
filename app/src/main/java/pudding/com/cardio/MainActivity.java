@@ -300,7 +300,7 @@ public class MainActivity
                     ContextCompat.getColor(this, R.color.view_graph_color_mean),
                     ContextCompat.getColor(this, R.color.view_graph_color_mean));
 
-            graphFragment.addGraph(getString(R.string.graph_standard_deviation_name),
+            graphFragment.addGraph(getString(R.string.graph_threshold_name),
                     ContextCompat.getColor(this, R.color.view_graph_color_standard_deviation),
                     ContextCompat.getColor(this, R.color.view_graph_color_standard_deviation));
 
@@ -321,7 +321,7 @@ public class MainActivity
                         graphFragment).commit();
             }
 
-            graphFragment.addGraph(getString(R.string.graph_beat_name),
+            graphFragment.addGraph(getString(R.string.graph_monitor_name),
                     ContextCompat.getColor(this, R.color.view_graph_color_beat),
                     ContextCompat.getColor(this, R.color.view_graph_color_beat));
 
@@ -349,7 +349,7 @@ public class MainActivity
                         graphFragment.addPoint(getString(R.string.graph_mean_name),
                                 new Point(System.currentTimeMillis(), mean));
 
-                        graphFragment.addPoint(getString(R.string.graph_standard_deviation_name),
+                        graphFragment.addPoint(getString(R.string.graph_threshold_name),
                                 new Point(System.currentTimeMillis(), standard_deviation));
                     }
                     else
@@ -360,7 +360,7 @@ public class MainActivity
                         graphFragment.addPoint(getString(R.string.graph_mean_name),
                                 new Point(System.currentTimeMillis(),  0.0));
 
-                        graphFragment.addPoint(getString(R.string.graph_standard_deviation_name),
+                        graphFragment.addPoint(getString(R.string.graph_threshold_name),
                                 new Point(System.currentTimeMillis(),  0.0));
                     }
                 }
@@ -375,9 +375,9 @@ public class MainActivity
                             new Point(System.currentTimeMillis(), 0.0));
 
                     //Add Data
-                    if (peak == true && located == true) graphFragment.addPoint(getString(R.string.graph_beat_name),
+                    if (peak == true && located == true) graphFragment.addPoint(getString(R.string.graph_monitor_name),
                             new Point(System.currentTimeMillis(), 1.0));
-                    else graphFragment.addPoint(getString(R.string.graph_beat_name),
+                    else graphFragment.addPoint(getString(R.string.graph_monitor_name),
                             new Point(System.currentTimeMillis(), 0.0));
                 }
             }

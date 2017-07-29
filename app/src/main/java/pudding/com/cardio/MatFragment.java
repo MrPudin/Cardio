@@ -35,7 +35,7 @@ public class MatFragment extends Fragment {
         Point pointBottomLeft = new Point(center.x + (size.width / 2.0),
                 center.y + (size.height / 2.0));
 
-        Scalar color = new Scalar(142, 68, 173);
+        Scalar color = new Scalar(127, 140, 141);
 
         Imgproc.rectangle(mat, pointUpperLeft, pointBottomLeft, color, 5);
     }

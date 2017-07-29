@@ -13,10 +13,10 @@
     <string name="dialog_camera_button_title">Commit Murder</string>
 
     <!-- Graph -->
-    <string name="graph_beat_name">Heartbeat</string>
+    <string name="graph_monitor_name">Monitor</string>
     <string name="graph_signal_name">Signal</string>
     <string name="graph_mean_name">Mean</string>
-    <string name="graph_standard_deviation_name">Standard Deviation</string>
+    <string name="graph_threshold_name">Threshold</string>
     <string name="fragment_graph_range">Value</string>
     <string name="fragment_graph_domain">Time</string>
     
