@@ -113,7 +113,7 @@ public class BlobLocator {
                 "<blobColor>"+this.blobColor +"</blobColor>\n" +
                 "<filterByArea>1</filterByArea>\n" +
                 "<minArea>"+this.blobMinArea +"</minArea>\n" +
-                "<maxArea>2000000.0</maxArea>\n" +
+                "<maxArea>200000000000.0</maxArea>\n" +
                 "<filterByCircularity>1</filterByCircularity>\n" +
                 "<minCircularity>"+this.blobMinCircularity +"</minCircularity>\n" +
                 "<maxCircularity>1.0</maxCircularity>\n" +
@@ -143,15 +143,14 @@ public class BlobLocator {
         Mat processMat = new Mat(mat.rows() / 4, mat.cols() / 4, mat.type());
         Mat tmpMat = new Mat(mat.rows() / 2, mat.cols() / 2, mat.type());
 
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_RECT, new Size(3,3));
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_ELLIPSE, new Size(5,5));
 
         //Noise Reduction && Optimisation
         Imgproc.pyrDown(mat, tmpMat, tmpMat.size());
         Imgproc.pyrDown(tmpMat, processMat, processMat.size());
 
-        //Morphological Opening
-        Imgproc.erode(processMat, processMat, kernel);
-        Imgproc.dilate(processMat, processMat, kernel);
+        //Noise Reduction
+        Imgproc.medianBlur(processMat, processMat, 5);
 
         //Morphological Closing
         Imgproc.dilate(processMat, processMat, kernel);
