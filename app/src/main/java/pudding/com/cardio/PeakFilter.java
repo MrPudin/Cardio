@@ -10,6 +10,7 @@ public class PeakFilter {
     private ArrayList<Double> log;
 
     //Cache
+    private boolean cachePeak;
     private boolean cacheMeanValid;
     private double cacheMean;
     private boolean cacheStandardDeviationValid;
@@ -25,6 +26,7 @@ public class PeakFilter {
         this.cacheStandardDeviationValid = false;
         this.cacheMean = 0.0;
         this.cacheStandardDeviation = 0.0;
+        this.cachePeak = false;
     }
 
     public void seed(double value)
@@ -40,6 +42,7 @@ public class PeakFilter {
     public boolean determinePeak(double value)
     {
         boolean result = false;
+        //Compute Peak
         if(this.log.size() >= this.logSize)
         {
             double deviation =  value - this.computeMean();
@@ -47,6 +50,20 @@ public class PeakFilter {
 
 
             if(zScore > this.peakThreshold) result = true; //Found Peak
+        }
+
+        //Multiple Peak Detection
+        if(this.cachePeak == true && result == true)
+        {
+            result = false;
+        }
+        else if(this.cachePeak == true && result == false)
+        {
+            this.cachePeak = result;
+        }
+        else if(this.cachePeak == false && result == true)
+        {
+            this.cachePeak = result;
         }
 
         return result;
