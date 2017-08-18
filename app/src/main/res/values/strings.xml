@@ -31,27 +31,28 @@
     <string name="fragment_config_pacemaker_duration_title">Duration</string>
     <string name="fragment_config_pacemaker_duration_summary">Set the duration in milliseconds data is collected to compute the heartbeat.
         A lower duration would compute the heartbeat faster, but would cause the reading to be less precise.</string>
-    <string name="fragment_config_pacemaker_duration_default">3000</string>
+    <string name="fragment_config_pacemaker_duration_default">5000</string>
+
+    <string name="fragment_config_pacemaker_log_title">Log Size</string>
+    <string name="fragment_config_pacemaker_log_summary">Sets the size of the pacemaker log, which helps the pacemaker function reliably.
+    A higher value helps the pacemaker more reliably, but causes the pacemaker to take a longer time to process signals.</string>
+    <string name="fragment_config_pacemaker_log_default">7</string>
 
     <string name="fragment_config_pacemaker_period_title">Period</string>
     <string name="fragment_config_pacemaker_period_summary">Sets the time period in milliseconds of pace computed by the pacemaker.
     To change the heartrate output to beats per minute, set this configuration to 60000 milliseconds.</string>
     <string name="fragment_config_pacemaker_period_default">60000</string>
 
-    <string name="fragment_config_pacemaker_log_title">Log Size</string>
-    <string name="fragment_config_pacemaker_log_summary">Sets the size of the pacemaker log, which helps the pacemaker function reliably.
-    A higher value helps the pacemaker more reliably, but causes the pacemaker to take a longer time to process signals.</string>
-    <string name="fragment_config_pacemaker_log_default">3</string>
 
     <string name="fragment_config_filter_category_title">Filter</string>
     <string name="fragment_config_filter_threshold_title">Threshold</string>
     <string name="fragment_config_filter_threshold_summary">Set the filter threshold, which is the defined as the minimum number of standard deviations the signal is away from the mean.
     Signals deviation from the mean that are at or above the threshold are registered as a beat.</string>
-    <string name="fragment_config_filter_threshold_default">1.0</string>
+    <string name="fragment_config_filter_threshold_default">1.25</string>
     <string name="fragment_config_filter_log_title">Log Size</string>
     <string name="fragment_config_filter_log_summary">Sets the size of the filter log, which helps the filter function reliably.
     A higher value helps the filter more reliably, but causes the filter to take a longer time to process signals.</string>
-    <string name="fragment_config_filter_log_default">3</string>
+    <string name="fragment_config_filter_log_default">8</string>
 
     <string name="fragment_config_blob_category_title">Computer Vision</string>
     <string name="fragment_config_blob_color_title">Color</string>
@@ -61,7 +62,7 @@
     <string name="fragment_config_blob_min_area_title">Minimum Area</string>
     <string name="fragment_config_blob_min_area_summary">A number that determines the minimum area requirement.
     Area is defines as the amount of pixels that object occupies.</string>
-    <string name="fragment_config_blob_min_area_default">10.0 </string>
+    <string name="fragment_config_blob_min_area_default">80.0</string>
     <string name="fragment_config_blob_min_circularity_title">Minimum circularity</string>
     <string name="fragment_config_blob_min_circularity_summary">A number that determines the minimum circularity requirement.
     Circularity measures how close to a circle an object is.</string>
@@ -69,10 +70,10 @@
     <string name="fragment_config_blob_min_convexity_title">Minimum Convexity</string>
     <string name="fragment_config_blob_min_convexity_summary">A number that determines the minimum convexity requirement.
     Convexity is defined as the (Area of the Blob / Area of its convex hull).</string>
-    <string name="fragment_config_blob_min_convexity_default">0.7</string>
+    <string name="fragment_config_blob_min_convexity_default">0.8</string>
     <string name="fragment_config_blob_min_inertia_title">Minimum Inertia</string>
     <string name="fragment_config_blob_min_inertia_summary">A number that determines the minimum inertia requirement.
     The inertia measures how elongated an object is.</string>
-    <string name="fragment_config_blob_min_inertia_default">0.7</string>
+    <string name="fragment_config_blob_min_inertia_default">0.8</string>
     <string name="display_pace_computing">...</string>
 </resources>
