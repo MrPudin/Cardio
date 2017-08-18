@@ -175,7 +175,7 @@ public class MainActivity
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         //Locate LED
         Mat frame = inputFrame.gray();
-        Mat displayFrame = inputFrame.rgba();
+        Mat displayFrame = inputFrame.gray();
         Mat processFrame = this.locator.process(frame);
 
         this.writeBitmapFragment(displayFrame,  this.locator.detect(processFrame));
